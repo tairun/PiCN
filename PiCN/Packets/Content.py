@@ -2,12 +2,13 @@
 
 from .Packet import Packet
 
+
 class Content(Packet):
     """
     Internal representation of a content object
     """
 
-    def __init__(self, name = None, content = None, wire_format = None):
+    def __init__(self, name=None, content=None, wire_format=None):
         Packet.__init__(self, name)
         if type(content) == str:
             self._content = content.encode()
@@ -16,12 +17,12 @@ class Content(Packet):
         assert (type(self._content) in [bytes, bytearray, type(None)]), "MUST be raw bytes or None"
         self._wire_format = wire_format
         assert (type(self._wire_format) in [bytes, bytearray, type(None)]), "MUST be raw bytes or None"
-        if content == None:
+        if content is None:
             self.content = b""
 
     @property
     def content(self) -> str:
-        if self._content == None:
+        if self._content is None:
             return None
         try:
             return self._content.decode()
