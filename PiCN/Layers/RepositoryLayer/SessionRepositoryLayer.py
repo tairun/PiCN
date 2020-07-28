@@ -14,7 +14,7 @@ class SessionRepositoryLayer(LayerProcess):
     def __init__(self, repository: BaseRepository, propagate_interest: bool = False, logger_name="RepoLayer", log_level=255):
         super().__init__(logger_name, log_level)
 
-        self._connector_identifier = "session_connector"
+        self._connector_identifier = Name("/test/t2/session_connector")
         self._repository: BaseRepository = repository
         self._propagate_interest: bool = propagate_interest
 

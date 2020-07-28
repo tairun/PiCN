@@ -82,11 +82,11 @@ if __name__ == "__main__":
     print(temp)
 
     simulation_bus = SimulationBus()  # Use BasicStringEncoder
-    icn_repo0 = ICNDataRepository(prefix=Name("/test/t1"), foldername=None, interfaces=[simulation_bus.add_interface("repo0")], log_level=255)  # Initialize repository 0
-    icn_repo1 = ICNDataRepositorySession(prefix=Name("/test/t2"), foldername=None, interfaces=[simulation_bus.add_interface("repo1")], log_level=255)  # Initialize repository 1 (this one has sessions)
+    icn_repo0 = ICNDataRepository(port=0, prefix=Name("/test/t1"), foldername=None, interfaces=[simulation_bus.add_interface("repo0")], log_level=255)  # Initialize repository 0
+    icn_repo1 = ICNDataRepositorySession(port=0, prefix=Name("/test/t2"), foldername=None, interfaces=[simulation_bus.add_interface("repo1")], log_level=255)  # Initialize repository 1 (this one has sessions)
 
-    icn_forwarder0 = ICNForwarder(log_level=0, interfaces=[simulation_bus.add_interface("fw0")])  # Initialize forwarder 0
-    icn_forwarder1 = ICNForwarder(interfaces=[simulation_bus.add_interface("fw1")])  # Initialize forwarder 1
+    icn_forwarder0 = ICNForwarder(port=0, log_level=0, interfaces=[simulation_bus.add_interface("fw0")])  # Initialize forwarder 0
+    icn_forwarder1 = ICNForwarder(port=0, interfaces=[simulation_bus.add_interface("fw1")])  # Initialize forwarder 1
 
     mgmt_client0 = MgmtClient(icn_repo0.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for repository 0
     mgmt_client1 = MgmtClient(icn_repo1.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for repository 1
@@ -106,30 +106,33 @@ if __name__ == "__main__":
     print(icn_forwarder0.icnlayer.pit)
     print(icn_forwarder0.icnlayer.cs)
 
-    print(mgmt_client2.add_face("repo0", None, 0))  # Add a connection between fw0 and repo0 interface
-    #print(mgmt_client2.add_forwarding_rule(Name("/test"), [0]))  # Add a rule to forward packages with this prefix to this forwarder.
-    print(icn_forwarder0.icnlayer.fib.add_fib_entry(Name('/test/t1'), [0]))
+    mgmt_client2.add_face("repo0", None, 0)  # Add a connection between fw0 and repo0 interface
+    mgmt_client2.add_face("fw1", None, 0)  # Add a connection between fw0 and repo0 interface
+    print(mgmt_client2.add_forwarding_rule(Name("/test/t1"), [0]))  # Add a rule to forward packages with this prefix to this forwarder.
+    print(mgmt_client2.add_forwarding_rule(Name("/test/t2"), [1]))  # Add a rule to forward packages with this prefix to this forwarder.
     # dummy.mgmt_client0.add_forwarding_rule(Name("/test/t1"), [0])  # Add
     mgmt_client3.add_face("repo1", None, 0)  # Add a network interface to forwarder 0 and give it ip and port
-    mgmt_client3.add_forwarding_rule(Name("/test"), [0])  # Add
+    print(mgmt_client3.add_forwarding_rule(Name("/test/t2"), [0]))  # Add
 
     # mgmt_client0.add_face("repo0", None, 0)  # Add a network interface to forwarder 0 and give it ip and port
     # mgmt_client0.add_forwarding_rule(Name("/test/t1"), [0])  # Add
     # mgmt_client1.add_face("repo1", None, 0)  # Add a network interface to forwarder 0 and give it ip and port
     # mgmt_client1.add_forwarding_rule(Name("/test/t2"), [0])  # Add
 
-    # icn_repo0.repo.add_content(Name("/test/t1/content_object"), "This is just a test for repo0.")
-    mgmt_client0.add_new_content(Name("/test/t1/content_object"), "This is just a test for repo0.")
-    mgmt_client1.add_new_content(Name("/test/t2/session_connector"), "This shouldn't be needed.")
+    #icn_repo0.repolayer._repository.add_content(Name("/test/t1/content_object"), "This is just a test for repo0.")
+    icn_repo0.repo.add_content(Name("/test/t1/content_object"), "This is just a test for repo0.")
+    # mgmt_client0.add_new_content(Name("/test/t1/content_object"), "This is just a test for repo0.")
+    #mgmt_client1.add_new_content(Name("/test/t2/session_connector"), "This shouldn't be needed.")
+    # icn_repo1.repo.add_content(Name("/test/t2/session_connector"), "Sessions!!!")
 
-    interest0 = Name("/test/t1/content_object")
+    #interest0 = Name("/test/t1/content_object")
     interest1 = Name("/test/t2/session_connector")
 
-    res0 = fetch_tool.fetch_data(interest0, timeout=20)
-    #res1 = fetch_tool.fetch_data(interest1, timeout=20)
+    #res0 = fetch_tool.fetch_data(interest0, timeout=20)
+    res1 = fetch_tool.fetch_data(interest1, timeout=20)
 
-    print(res0)
-    # print(res1)
+    #print(res0)
+    print(res1)
 
     # setup(dummy)
     # teardown(dummy)
