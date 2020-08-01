@@ -7,6 +7,8 @@ from PiCN.Layers.RepositoryLayer.Repository import BaseRepository
 from PiCN.Packets import Interest, Content, Packet, Nack, NackReason, Name
 from PiCN.Processes import LayerProcess
 
+from typing import List
+
 
 class SessionRepositoryLayer(LayerProcess):
     """Basic implementation of the repository layer with session support"""
@@ -14,7 +16,9 @@ class SessionRepositoryLayer(LayerProcess):
     def __init__(self, repository: BaseRepository, propagate_interest: bool = False, logger_name="RepoLayer", log_level=255):
         super().__init__(logger_name, log_level)
 
-        self._connector_identifier: Name =  Name("/test/t2/session_connector")
+        self._connector_identifier: str = 'session_connector'
+        self._pending_sessions: List = []  # TODO: Implement session initiation procedure (handshake).
+        self._running_sessions: List = []  # TODO: Implement better data structure to handle sessions. HashMap?
         self._repository: BaseRepository = repository
         self._propagate_interest: bool = propagate_interest
 
@@ -36,16 +40,18 @@ class SessionRepositoryLayer(LayerProcess):
         faceid = data[0]
         packet = data[1]
 
-        self.logger.info(f"--> : {packet.name}")  # FIXME: Delete when done.
+        self.logger.info(f"--> : {packet.name.components[-1].decode()}")  # FIXME: Delete when done.
 
-        if isinstance(packet, Interest):  # TODO: Can I check here for connector interest and return session key? Yes!
-            if packet.name == self._connector_identifier:
-                self.logger.info('--> : Branching is good :-)') # FIXME: Delete when done.
-                c = Content(self._connector_identifier, self._make_session_key(), None)
-                self.queue_to_lower.put([faceid, c])
+        if isinstance(packet, Interest):  # TODO: Can I check here for connector interest and return session key? Yes!!
+            if packet.name.components[-1].decode() == self._connector_identifier:
+                self.logger.info('--> : Branching is good :-)')  # FIXME: Delete when done.
+                key: str = self._make_session_key()
+                self._running_sessions.append(key)
+                c = Content(packet.name, key, None)
                 self.logger.info("Request to initiate session. Sending key down")
+                self.queue_to_lower.put([faceid, c])
                 return
-            elif self._repository.is_content_available(packet.name):
+            elif self._repository.is_content_available(packet.name):  # Gets content object from content store.
                 c = self._repository.get_content(packet.name)
                 self.queue_to_lower.put([faceid, c])
                 self.logger.info("Found content object, sending down")
