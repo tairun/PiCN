@@ -39,8 +39,8 @@ class ICNDataRepositorySession(object):
         :param foldername: If None, use an in-memory repository. Else, use a file system repository.
         """
 
-        logger = Logger("ICNRepo", log_level)
-        logger.info("Start PiCN Data Repository")
+        logger = Logger("ICNRepoSession", log_level)
+        logger.info("Start PiCN Data Repository with Sessions")
 
         # packet encoder
         if encoder is None:
