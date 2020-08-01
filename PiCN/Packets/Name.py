@@ -49,7 +49,7 @@ class Name(object):
 
     def to_json(self) -> str:
         """encoded name as JSON"""
-        n = {}
+        n = dict()
         n['suite'] = self.suite
         n['comps'] = [binascii.hexlify(c).decode('ascii', 'replace') for c in self._components]
         if self.digest:

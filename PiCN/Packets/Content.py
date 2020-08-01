@@ -2,6 +2,8 @@
 
 from .Packet import Packet
 
+from typing import Optional
+
 
 class Content(Packet):
     """
@@ -21,12 +23,12 @@ class Content(Packet):
             self.content = b""
 
     @property
-    def content(self) -> str:
+    def content(self) -> Optional[str]:
         if self._content is None:
             return None
         try:
             return self._content.decode()
-        except:
+        except:  # FIXME: Catch specific error?
             return "".join(" 0x%02x" % x for x in self._content)[1:]
 
     def get_bytes(self) -> bytearray:
@@ -42,4 +44,4 @@ class Content(Packet):
     def __eq__(self, other):
         if type(other) is not Content:
             return False
-        return self.name == other.name and self._content == other._content
+        return self.name == other.name and self._content == other.content
