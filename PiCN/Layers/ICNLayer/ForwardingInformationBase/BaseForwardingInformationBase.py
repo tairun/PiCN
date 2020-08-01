@@ -11,9 +11,9 @@ from PiCN.Layers.ICNLayer import BaseICNDataStruct
 class ForwardingInformationBaseEntry(object):
     """An entry in the Forwarding Information Base"""
 
-    def __init__(self, name: Name, faceid: int, static: bool=False):
+    def __init__(self, name: Name, faceid: int, static: bool = False):
         self._name: Name = name
-        self._faceid: List[int] = faceid
+        self._faceid: List[int] = faceid  # FIXME: Why int assigned to list?
         self._static: bool = static
 
     def __eq__(self, other):
@@ -69,7 +69,7 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
     @abc.abstractmethod
     def find_fib_entry(self, name: Name, already_used: List[ForwardingInformationBaseEntry] = None,
                        incoming_faceids: List[int] = None) \
-            ->ForwardingInformationBaseEntry:
+            -> ForwardingInformationBaseEntry:
         """Find an entry in the FIB"""
 
     @abc.abstractmethod

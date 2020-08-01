@@ -8,6 +8,8 @@ from PiCN.Layers.ICNLayer.PendingInterestTable.BasePendingInterestTable import B
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
 from PiCN.Packets import Interest, Name
 
+from typing import Optional
+
 
 class PendingInterstTableMemoryExact(BasePendingInterestTable):
     """in-memory Pending Interest Table using exact prefix matching"""
@@ -15,7 +17,7 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
     def __init__(self, pit_timeout: int = 4, pit_retransmits: int = 3) -> None:
         super().__init__(pit_timeout=pit_timeout, pit_retransmits=pit_retransmits)
 
-    def add_pit_entry(self, name, faceid: int, interest: Interest = None, local_app = False):
+    def add_pit_entry(self, name, faceid: int, interest: Interest = None, local_app=False):
         for pit_entry in self.container:
             if pit_entry.name == name:
                 if faceid in pit_entry.face_id and local_app in pit_entry.local_app:
@@ -50,7 +52,7 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
                 new_entry.faces_already_nacked = pit_entry.faces_already_nacked
                 self.container.append(new_entry)
 
-    def find_pit_entry(self, name: Name) -> PendingInterestTableEntry:
+    def find_pit_entry(self, name: Name) -> Optional[PendingInterestTableEntry]:
         for pit_entry in self.container:
             if pit_entry.name == name:
                 return pit_entry
@@ -94,4 +96,4 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
         for pit_entry in updated:
             self.remove_pit_entry(pit_entry.name)
             self.container.append(pit_entry)
-        return updated, remove
+        return updated, remove  # FIXME: Return correct things according to function signature.
