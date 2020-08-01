@@ -14,15 +14,15 @@ class SessionRepositoryLayer(LayerProcess):
     def __init__(self, repository: BaseRepository, propagate_interest: bool = False, logger_name="RepoLayer", log_level=255):
         super().__init__(logger_name, log_level)
 
-        self._connector_identifier = Name("/test/t2/session_connector")
+        self._connector_identifier: Name =  Name("/test/t2/session_connector")
         self._repository: BaseRepository = repository
         self._propagate_interest: bool = propagate_interest
 
-    def make_session_key(self) -> str:
+    def _make_session_key(self, bits: int = 16) -> str:
         """
         Creates a cryptographically-secure, URL-safe string
         """
-        return secrets.token_urlsafe(16)
+        return secrets.token_urlsafe(bits)
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data: Packet):
         pass  # do not expect this to happen, since repository is highest layer
@@ -36,9 +36,12 @@ class SessionRepositoryLayer(LayerProcess):
         faceid = data[0]
         packet = data[1]
 
-        if isinstance(packet, Interest):  # TODO: Can I check here for connector interest and return session key?
+        self.logger.info(f"--> : {packet.name}")  # FIXME: Delete when done.
+
+        if isinstance(packet, Interest):  # TODO: Can I check here for connector interest and return session key? Yes!
             if packet.name == self._connector_identifier:
-                c = Content(Name(self._connector_identifier), SessionRepositoryLayer.make_session_key(self), None)
+                self.logger.info('--> : Branching is good :-)') # FIXME: Delete when done.
+                c = Content(self._connector_identifier, self._make_session_key(), None)
                 self.queue_to_lower.put([faceid, c])
                 self.logger.info("Request to initiate session. Sending key down")
                 return
