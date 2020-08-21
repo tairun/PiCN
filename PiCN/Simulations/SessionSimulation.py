@@ -28,9 +28,9 @@ if __name__ == "__main__":
     # setup(dummy)
     # teardown(dummy)
 
-    simulation_bus = SimulationBus(log_level=255)  # Use BasicStringEncoder
+    simulation_bus = SimulationBus(log_level=0)  # Use BasicStringEncoder
     icn_repo0 = ICNDataRepository(port=0, prefix=Name("/test/t1"), foldername=None, interfaces=[simulation_bus.add_interface("repo0")], log_level=255)  # Initialize repository 0
-    icn_repo1 = ICNDataRepositorySession(port=0, prefix=Name("/test/t2"), foldername=None, interfaces=[simulation_bus.add_interface("repo1")], log_level=255)  # Initialize repository 1 (this one has sessions)
+    icn_repo1 = ICNDataRepositorySession(port=0, prefix=Name("/test/t2"), foldername=None, interfaces=[simulation_bus.add_interface("repo1")], log_level=0)  # Initialize repository 1 (this one has sessions)
 
     icn_forwarder0 = ICNForwarder(port=0, log_level=255, interfaces=[simulation_bus.add_interface("fw0")])  # Initialize forwarder 0
     icn_forwarder1 = ICNForwarder(port=0, log_level=255, interfaces=[simulation_bus.add_interface("fw1")])  # Initialize forwarder 1
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     icn_forwarder1.start_forwarder()
     simulation_bus.start_process()
 
-    time.sleep(1)
+    time.sleep(1)  # Be safe and wait for all processes to start
 
     mgmt_client2.add_face("repo0", None, 0)  # Add new interface to forwarder 0, index has to be 0.
     mgmt_client2.add_face("fw1", None, 0)  # # Add new interface to forwarder 0, index has to be 0.
@@ -62,7 +62,11 @@ if __name__ == "__main__":
 
     icn_repo0.repo.add_content(Name("/test/t1/content_object"), "This is just a test for repo0.")  # TODO: Create add_new_content command for DataRepository in ManagementClient
 
+    print(icn_forwarder0.icnlayer.fib)
+    print(icn_forwarder1.icnlayer.fib)
+
     interest0 = Name("/test/t1/content_object")  # Test routing, no new features.
+    print(icn_forwarder0.icnlayer.pit)
     interest1 = Name("/test/t2/session_connector")  # Test session connection string. This should return 16bits
 
     res0 = fetch0.fetch_data(interest0, timeout=20)
@@ -70,7 +74,9 @@ if __name__ == "__main__":
     time.sleep(1)
     res1 = fetch1.fetch_data(interest1, timeout=20)
     print(f"Return value of fetch1 is: {res1}")
-    print(f"All session keys: {fetch1.session_keys}")
+    print(f"All session keys: {fetch1._session_keys}")
+
+    time.sleep(1)  # Be safe and wait for all messages to trickle in before shutting down everything
 
     icn_forwarder0.stop_forwarder()
     icn_forwarder1.stop_forwarder()
