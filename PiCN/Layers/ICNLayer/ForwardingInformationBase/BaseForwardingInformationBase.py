@@ -2,16 +2,18 @@
 
 import abc
 import multiprocessing
-from typing import List, Optional
+from tabulate import tabulate
 
 from PiCN.Packets import Name
 from PiCN.Layers.ICNLayer import BaseICNDataStruct
+
+from typing import List, Optional
 
 
 class ForwardingInformationBaseEntry(object):
     """An entry in the Forwarding Information Base"""
 
-    def __init__(self, name: Name, faceid: int, static: bool=False):
+    def __init__(self, name: Name, faceid: int, static: bool = False):
         self._name: Name = name
         self._faceid: List[int] = faceid
         self._static: bool = static
@@ -68,8 +70,7 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
 
     @abc.abstractmethod
     def find_fib_entry(self, name: Name, already_used: List[ForwardingInformationBaseEntry] = None,
-                       incoming_faceids: List[int] = None) \
-            ->ForwardingInformationBaseEntry:
+                       incoming_faceids: List[int] = None) -> ForwardingInformationBaseEntry:
         """Find an entry in the FIB"""
 
     @abc.abstractmethod
@@ -80,4 +81,7 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
     def clear(self):
         """Remove all non-static entries from the FIB"""
 
-
+    def __repr__(self):
+        headers = ['Name', 'FaceIDs', 'Static']
+        data = [[entry.name, entry._faceid, entry.static] for entry in self._container]
+        return f"Fowarding Information Base:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
