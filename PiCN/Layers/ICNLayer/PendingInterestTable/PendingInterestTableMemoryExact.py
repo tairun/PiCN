@@ -1,4 +1,4 @@
-"""in-memory Pending Interest Table using exact prefix matching"""
+"""In-memory Pending Interest Table using exact prefix matching"""
 
 import time
 
@@ -8,11 +8,11 @@ from PiCN.Layers.ICNLayer.PendingInterestTable.BasePendingInterestTable import B
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
 from PiCN.Packets import Interest, Name
 
-from typing import Optional
+from typing import Optional, Tuple
 
 
 class PendingInterstTableMemoryExact(BasePendingInterestTable):
-    """in-memory Pending Interest Table using exact prefix matching"""
+    """In-memory Pending Interest Table using exact prefix matching"""
 
     def __init__(self, pit_timeout: int = 4, pit_retransmits: int = 3) -> None:
         super().__init__(pit_timeout=pit_timeout, pit_retransmits=pit_retransmits)
@@ -81,7 +81,7 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
     def append(self, entry):
         self.container.append(entry)
 
-    def ageing(self) -> List[PendingInterestTableEntry]:
+    def ageing(self) -> Tuple[List[PendingInterestTableEntry]]:
         cur_time = time.time()
         remove = []
         updated = []
@@ -96,4 +96,4 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
         for pit_entry in updated:
             self.remove_pit_entry(pit_entry.name)
             self.container.append(pit_entry)
-        return updated, remove  # FIXME: Return correct things according to function signature.
+        return updated, remove

@@ -63,7 +63,7 @@ class Name(object):
         self.digest = binascii.dehexlify(n['dgest']) if 'dgest' in n else None
         return self
 
-    def setDigest(self, digest: str = None):
+    def set_digest(self, digest: str = None):
         self.digest = digest
         return self
 
