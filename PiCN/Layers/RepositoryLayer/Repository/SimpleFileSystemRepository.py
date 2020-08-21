@@ -13,13 +13,10 @@ class SimpleFileSystemRepository(BaseRepository):
     """A Simple File System Repository"""
 
     def __init__(self, foldername: str, prefix: Name, manager: Manager, logger: Logger=None):
-        super().__init__()
+        super().__init__(prefix, manager)
         self._foldername: str = foldername
-        self._safepath = safepath = os.path.abspath(self._foldername)
-        self._manager = manager
-        self._prefix = manager.Value(Name, prefix)
+        self._safepath = os.path.abspath(self._foldername)  # FIXME: What is safepath in this assignment? self._safepath = safepath = os.path.abspath(self._foldername)
         self.logger = logger
-
 
     def is_content_available(self, icnname: Name) -> bool:
         if not icnname.components_to_string().startswith(self._prefix.value.components_to_string()):
@@ -32,7 +29,6 @@ class SimpleFileSystemRepository(BaseRepository):
         if os.path.isfile(filename_abs):
             return True
         return False
-
 
     def get_content(self, icnname: Name) -> Content:
         if not icnname.components_to_string().startswith(self._prefix.value.components_to_string()):
@@ -56,8 +52,3 @@ class SimpleFileSystemRepository(BaseRepository):
             os.mkdir( self._foldername)
         with open( self._foldername + icnname.to_string(), 'w+') as f:
             f.write(chunk)
-
-    def set_prefix(self, prefix: Name):
-        self._prefix.value = prefix
-
-# eof
