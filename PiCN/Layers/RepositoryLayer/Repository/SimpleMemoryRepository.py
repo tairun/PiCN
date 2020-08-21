@@ -1,23 +1,21 @@
+"""A simple in-memory repository"""
 
-from typing import Dict
-
-import multiprocessing
+from multiprocessing import Manager
 
 from PiCN.Layers.RepositoryLayer.Repository import BaseRepository
 from PiCN.Packets import Name, Content
 from PiCN.Logger import Logger
 
+from typing import Dict
+
 
 class SimpleMemoryRepository(BaseRepository):
-    """
-    A simple in-memory repository
-    """
+    """A simple in-memory repository"""
 
-    def __init__(self, prefix: Name, manager: multiprocessing.Manager, logger: Logger=None):
-        super().__init__()
+    def __init__(self, prefix: Name, manager: Manager, logger: Logger=None):
+        super().__init__(prefix, manager)
         self.logger = logger
         self._storage: Dict[Name, object] = manager.dict()
-        self._prefix: manager.Value = manager.Value(Name, prefix)
 
     def is_content_available(self, icnname: Name) -> bool:
         if icnname is None or not self._prefix.value.is_prefix_of(icnname):
@@ -39,6 +37,3 @@ class SimpleMemoryRepository(BaseRepository):
         if icnname is None or icnname not in self._storage:
             return
         del self._storage[icnname]
-
-    def set_prefix(self, prefix: Name):
-        self._prefix.value = prefix
