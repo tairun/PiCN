@@ -2,10 +2,10 @@
 
 import abc
 import multiprocessing
-from tabulate import tabulate
 
-from PiCN.Packets import Name
 from PiCN.Layers.ICNLayer import BaseICNDataStruct
+from PiCN.Packets import Name
+from tabulate import tabulate
 
 from typing import List, Optional
 
@@ -15,7 +15,7 @@ class ForwardingInformationBaseEntry(object):
 
     def __init__(self, name: Name, faceid: int, static: bool = False):
         self._name: Name = name
-        self._faceid: List[int] = faceid
+        self._faceid: List[int] = faceid  # FIXME: Why int assigned to list?
         self._static: bool = static
 
     def __eq__(self, other):
@@ -83,5 +83,6 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
 
     def __repr__(self):
         headers = ['Name', 'FaceIDs', 'Static']
-        data = [[entry.name, entry._faceid, entry.static] for entry in self._container]
+        data = [[entry.name, entry._faceid, entry.static]
+                for entry in self._container]
         return f"Fowarding Information Base:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"

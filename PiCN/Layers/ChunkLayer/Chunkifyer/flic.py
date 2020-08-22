@@ -116,14 +116,14 @@ class DeFlic():
             if decoder.peekType(NDN_TYPE_MANIFEST_DATAPTR, end):
                 ptr = decoder.readBlobTlv(NDN_TYPE_MANIFEST_DATAPTR)
                 # print("data ptr %s" % binascii.hexlify(ptr))
-                name = copy.copy(pfx).setDigest(ptr)
+                name = copy.copy(pfx).set_digest(ptr)
                 # print(name.to_json())
                 chunk = self.icn.readChunk(name)
                 data += NdnTlvEncoder().decode(chunk).get_bytes()
             elif decoder.peekType(NDN_TYPE_MANIFEST_MANIFESTPTR, end):
                 ptr = decoder.readBlobTlv(NDN_TYPE_MANIFEST_MANIFESTPTR)
                 # print("manifest ptr %s" % binascii.hexlify(ptr))
-                name = copy.copy(pfx).setDigest(ptr)
+                name = copy.copy(pfx).set_digest(ptr)
                 chunk = self.icn.readChunk(name)
                 content = NdnTlvEncoder().decode(chunk)
                 data += self._manifestToBytes(content.get_bytes())

@@ -34,7 +34,8 @@ class PendingInterestTableEntry(object):
         if fib_entries_already_used:  # default parameter is not [] but None and this if else is here because [] as default parameter leads to a strange behavior
             self._fib_entries_already_used: List[ForwardingInformationBaseEntry] = fib_entries_already_used
         else:
-            self._fib_entries_already_used: List[ForwardingInformationBaseEntry] = []
+            self._fib_entries_already_used: List[ForwardingInformationBaseEntry] = [
+            ]
         if faces_already_nacked:
             self.faces_already_nacked = faces_already_nacked
         else:
@@ -196,9 +197,6 @@ class BasePendingInterestTable(BaseICNDataStruct):
 
     def __repr__(self):
         headers = ['Name', 'FaceIDs', 'Timestamp', 'Retransmits', 'Interest']
-        data = [[entry.name, entry._faceids, entry._timestamp, entry._retransmits, entry._interest] for entry in self._container]
+        data = [[entry.name, entry._faceids, entry._timestamp,
+                 entry._retransmits, entry._interest] for entry in self._container]
         return f"Pending Interest Table:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
-
-
-
-

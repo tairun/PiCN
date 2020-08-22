@@ -14,7 +14,8 @@ class Packet(object):
         else:
             self._name: Name = name
         self._wire_format = wire_format
-        assert (type(self._wire_format) in [bytes, bytearray, type(None)]), "MUST be raw bytes or None"
+        assert (type(self._wire_format) in [
+                bytes, bytearray, type(None)]), "MUST be raw bytes or None"
 
     def __eq__(self, other):
         if type(other) is not Packet:
@@ -22,7 +23,8 @@ class Packet(object):
         return self.name == other.name  # and self.name_payload == other.name_payload
 
     def __hash__(self):
-        return self._name.__hash__() + self._name_payload.__hash__()  # FIXME: What is the property _name_payload?
+        # FIXME: What is the property _name_payload?
+        return self._name.__hash__() + self._name_payload.__hash__()
 
     def __repr__(self):
         return f"Packet of type {type(self)}: {self._name.components_to_string()}"
