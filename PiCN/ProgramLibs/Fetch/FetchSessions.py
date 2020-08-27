@@ -11,10 +11,10 @@ from typing import Optional, Dict
 class FetchSessions(Fetch):
     """Fetch Tool for PiCN supporting sessions"""
 
-    def __init__(self, ip: str, port: int, log_level=255, encoder: BasicEncoder = None, autoconfig: bool = False,
+    def __init__(self, ip: Name, port: int, log_level=255, encoder: BasicEncoder = None, autoconfig: bool = False,
                  interfaces=None, session_keys: Optional[Dict] = None):
         super().__init__(ip, port, log_level, encoder, autoconfig, interfaces)
-
+        self.ip = ip
         self._session_keys: Dict = dict() if session_keys is None else session_keys  # TODO: Extend this to work with multiple repos (use dict or something).
         self._has_session: bool = True if session_keys is not None else False
         self._session_identifier = 'session_connector'
