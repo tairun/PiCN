@@ -17,22 +17,22 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
     def __init__(self, pit_timeout: int = 4, pit_retransmits: int = 3) -> None:
         super().__init__(pit_timeout=pit_timeout, pit_retransmits=pit_retransmits)
 
-    def add_pit_entry(self, name, faceid: int, interest: Interest = None, local_app=False):
+    def add_pit_entry(self, name, faceid: int, interest: Interest = None, local_app=False, is_session: bool = False):
         for pit_entry in self.container:
             if pit_entry.name == name:
                 if faceid in pit_entry.face_id and local_app in pit_entry.local_app:
                     return
                 self.container.remove(pit_entry)
-                pit_entry._faceids.append(faceid)
-                pit_entry._local_app.append(local_app)
+                pit_entry.faceids.append(faceid)
+                pit_entry.local_app.append(local_app)
                 self.container.append(pit_entry)
                 return
-        self.container.append(PendingInterestTableEntry(name, faceid, interest, local_app))
+        self.container.append(PendingInterestTableEntry(name, faceid, interest, local_app, is_session=is_session))
 
     def remove_pit_entry(self, name: Name):
         to_remove = []
         for pit_entry in self.container:
-            if pit_entry.name == name:
+            if pit_entry.name == name and not pit_entry.is_session:
                 to_remove.append(pit_entry)
         for r in to_remove:
             self.container.remove(r)
@@ -68,7 +68,7 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
         new_entry.faces_already_nacked = pit_entry.faces_already_nacked
         self.container.append(new_entry)
 
-    def add_used_fib_entry(self, name: Name, used_fib_entry: ForwardingInformationBaseEntry):
+    def add_used_fib_entry(self, name: Name, used_fib_entry: ForwardingInformationBaseEntry):  # FIXME: What is a used_fib_entry?
         pit_entry = self.find_pit_entry(name)
         self.container.remove(pit_entry)
         pit_entry.fib_entries_already_used.append(used_fib_entry)
@@ -81,12 +81,12 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
     def append(self, entry):
         self.container.append(entry)
 
-    def ageing(self) -> Tuple[List[PendingInterestTableEntry]]:
+    def ageing(self) -> Tuple[List[PendingInterestTableEntry], List[PendingInterestTableEntry]]:
         cur_time = time.time()
         remove = []
         updated = []
         for pit_entry in self.container:
-            if pit_entry.timestamp + self._pit_timeout < cur_time and pit_entry.retransmits > self._pit_retransmits:
+            if pit_entry.timestamp + self._pit_timeout < cur_time and pit_entry.retransmits > self._pit_retransmits and not pit_entry.is_session:
                 remove.append(pit_entry)
             else:
                 pit_entry.retransmits = pit_entry.retransmits + 1
