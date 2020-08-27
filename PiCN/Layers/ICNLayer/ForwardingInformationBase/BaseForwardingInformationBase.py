@@ -13,8 +13,9 @@ from typing import List, Optional
 class ForwardingInformationBaseEntry(object):
     """An entry in the Forwarding Information Base"""
 
-    def __init__(self, name: Name, faceid: int, static: bool = False):
+    def __init__(self, name: Name, faceid: List[int], static: bool = False, is_session: bool = False):
         self._name: Name = name
+        self._is_session = is_session
         self._faceid: List[int] = faceid  # FIXME: Why int assigned to list?
         self._static: bool = static
 
@@ -61,7 +62,7 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
         self._manager: Optional[multiprocessing.Manager] = None
 
     @abc.abstractmethod
-    def add_fib_entry(self, name: Name, fid: List[int], static: bool):
+    def add_fib_entry(self, name: Name, fid: List[int], static: bool, is_session: bool = False):
         """Add an Interest to the FIB"""
 
     @abc.abstractmethod
@@ -83,6 +84,6 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
 
     def __repr__(self):
         headers = ['Name', 'FaceIDs', 'Static']
-        data = [[entry.name, entry._faceid, entry.static]
+        data = [[entry.name, entry.faceid, entry.static]
                 for entry in self._container]
         return f"Fowarding Information Base:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
