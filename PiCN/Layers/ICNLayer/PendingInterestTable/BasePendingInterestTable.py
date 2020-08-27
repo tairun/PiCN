@@ -16,8 +16,9 @@ class PendingInterestTableEntry(object):
 
     def __init__(self, name: Name, faceid: int, interest: Interest = None, local_app: bool = False,
                  fib_entries_already_used: List[ForwardingInformationBaseEntry] = None, faces_already_nacked=None,
-                 number_of_forwards=0):
+                 number_of_forwards=0, is_session: bool = False):
         self.name = name
+        self.is_session = is_session
         self._faceids: List[int] = []
         if isinstance(faceid, list):
             self._faceids.extend(faceid)
@@ -60,7 +61,7 @@ class PendingInterestTableEntry(object):
         return self._faceids
 
     @faceids.setter
-    def face_id(self, faceids):
+    def faceids(self, faceids):
         self._faceids = faceids
 
     @property
@@ -116,7 +117,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
         self._pit_retransmits = pit_retransmits
 
     @abc.abstractmethod
-    def add_pit_entry(self, name: Name, faceid: int, interest: Interest = None, local_app: bool = False):
+    def add_pit_entry(self, name: Name, faceid: int, interest: Interest = None, local_app: bool = False, is_session: bool = False):
         """Add an new entry"""
 
     @abc.abstractmethod
