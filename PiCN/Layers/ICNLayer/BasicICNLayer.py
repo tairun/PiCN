@@ -2,8 +2,6 @@
 
 import multiprocessing
 import threading
-import time
-from typing import List
 
 from PiCN.Layers.ICNLayer.ContentStore import BaseContentStore, ContentStoreEntry
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import BaseForwardingInformationBase, ForwardingInformationBaseEntry
@@ -17,9 +15,9 @@ class BasicICNLayer(LayerProcess):
     """ICN Forwarding Plane. Maintains data structures for ICN Forwarding
     """
 
-    def __init__(self, cs: BaseContentStore=None, pit: BasePendingInterestTable=None,
-            fib: BaseForwardingInformationBase=None, rib: BaseRoutingInformationBase = None, log_level=255,
-                 ageing_interval: int=3):
+    def __init__(self, cs: BaseContentStore = None, pit: BasePendingInterestTable = None,
+                 fib: BaseForwardingInformationBase = None, rib: BaseRoutingInformationBase = None, log_level=255,
+                 ageing_interval: int = 3):
         super().__init__(logger_name="ICNLayer", log_level=log_level)
         self.cs = cs
         self.pit = pit
@@ -58,8 +56,8 @@ class BasicICNLayer(LayerProcess):
         elif isinstance(packet, Nack):
             self.handle_nack(face_id, packet, to_lower, to_higher, False)
 
-    def handle_interest_from_higher (self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
-                                   to_higher: multiprocessing.Queue):
+    def handle_interest_from_higher(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
+                                    to_higher: multiprocessing.Queue):
         self.logger.info("Handling Interest (from higher): " + str(interest.name) + "; Face ID: " + str(face_id))
         cs_entry = self.cs.find_content_object(interest.name)
         if cs_entry is not None:
@@ -85,10 +83,10 @@ class BasicICNLayer(LayerProcess):
             nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
             if pit_entry is not None:  # if pit entry is available, consider it, otherwise assume interest came from higher
                 for i in range(0, len(pit_entry.faceids)):
-                    if pit_entry._local_app[i]:
+                    if pit_entry.local_app[i]:
                         to_higher.put([face_id, nack])
                     else:
-                        to_lower.put([pit_entry._faceids[i], nack])
+                        to_lower.put([pit_entry.faceids[i], nack])
             else:
                 to_higher.put([face_id, nack])
 
@@ -124,7 +122,7 @@ class BasicICNLayer(LayerProcess):
         self.logger.info("No FIB entry, sending Nack")
         nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
         if from_local:
-            to_higher.put([face_id, nack])
+            to_higher.put([face_id, nack])  # FIXME
         else:
             to_lower.put([face_id, nack])
 
