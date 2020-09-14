@@ -88,7 +88,7 @@ class Name(object):
             for comp in other:
                 if type(comp) is str:
                     components.append(comp.encode('ascii'))
-                elif type(comp) is bytes:
+                elif type(comp) is bytes: # FIXME: Handle bytes correctly, this won't work: Name('/Hello') + b'world'
                     components.append(comp)
                 else:
                     raise TypeError('Not a Name, str, List[str] or List[bytes]')

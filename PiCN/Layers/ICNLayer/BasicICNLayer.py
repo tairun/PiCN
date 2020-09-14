@@ -25,6 +25,7 @@ class BasicICNLayer(LayerProcess):
         self.rib = rib
         self._ageing_interval: int = ageing_interval
         self._interest_to_app: bool = False
+        self._session_identifier = 'session_connector'
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         high_level_id = data[0]
@@ -56,6 +57,7 @@ class BasicICNLayer(LayerProcess):
         elif isinstance(packet, Nack):
             self.handle_nack(face_id, packet, to_lower, to_higher, False)
 
+    # Send
     def handle_interest_from_higher(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
                                     to_higher: multiprocessing.Queue):
         self.logger.info("Handling Interest (from higher): " + str(interest.name) + "; Face ID: " + str(face_id))
@@ -81,7 +83,7 @@ class BasicICNLayer(LayerProcess):
         else:
             self.logger.info("No FIB entry, sending Nack: " + str(interest.name))
             nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
-            if pit_entry is not None:  # if pit entry is available, consider it, otherwise assume interest came from higher
+            if pit_entry is not None:  # If pit entry is available, consider it, otherwise assume interest came from higher
                 for i in range(0, len(pit_entry.faceids)):
                     if pit_entry.local_app[i]:
                         to_higher.put([face_id, nack])
@@ -90,35 +92,50 @@ class BasicICNLayer(LayerProcess):
             else:
                 to_higher.put([face_id, nack])
 
+    # Receive
     def handle_interest_from_lower(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
                                    to_higher: multiprocessing.Queue, from_local: bool = False):
         self.logger.info("Handling Interest (from lower): " + str(interest.name) + "; Face ID: " + str(face_id))
         cs_entry = self.cs.find_content_object(interest.name)
+
+        # TODO: Delete when done: Content found on this node. Send back. No adjustment needed for sessions?!
         if cs_entry is not None:
             self.logger.info("Found in content store")
             to_lower.put([face_id, cs_entry.content])
             self.cs.update_timestamp(cs_entry)
             return
+
         pit_entry = self.pit.find_pit_entry(interest.name)
+
+        # TODO: Delete when done: Why do we add a PIT entry if there is already one in the table? What does local_app do?
         if pit_entry is not None:
             self.logger.info("Found in PIT, appending")
             self.pit.update_timestamp(pit_entry)
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
             return
+
+        # TODO: Delete when done: Not interesting for sessions?
         if self._interest_to_app is True and to_higher is not None:  # App layer support
             self.logger.info("Sending to higher Layer")
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
             self.queue_to_higher.put([face_id, interest])
             return
-        new_face_id = self.fib.find_fib_entry(interest.name, None, [face_id])
+
+        new_face_id = self.fib.find_fib_entry(interest.name, None, [face_id])  # TODO: Delete when done: Checks FIB rules set by MGMT tool?
+
+        # TODO: Delete when done: There is a forwarding rule in the FIB, use it to create PIT
         if new_face_id is not None:
-            self.logger.info("Found in FIB, forwarding to Face: " +  str(new_face_id.faceid))
+            self.logger.info("Found in FIB, forwarding to Face: " + str(new_face_id.faceid))
+
+            # TODO: Check for session and create PIT accordingly
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
+
             for fid in new_face_id.faceid:
                 if not self.pit.test_faceid_was_nacked(interest.name, fid):
                     self.pit.increase_number_of_forwards(interest.name)
                     to_lower.put([fid, interest])
             return
+
         self.logger.info("No FIB entry, sending Nack")
         nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
         if from_local:
@@ -126,13 +143,15 @@ class BasicICNLayer(LayerProcess):
         else:
             to_lower.put([face_id, nack])
 
+    # TODO: Delete when done: Maybe split in handle_content_from_lower and handle_content_from_higher?
     def handle_content(self, face_id: int, content: Content, to_lower: multiprocessing.Queue,
                        to_higher: multiprocessing.Queue, from_local: bool = False):
         self.logger.info("Handling Content " + str(content.name) + " " + str(content.content))
         pit_entry = self.pit.find_pit_entry(content.name)
+
         if pit_entry is None:
             self.logger.info("No PIT entry for content object available, dropping")
-            # TODO: NACK?
+            # TODO: NACK? Probably, since the fetch tool will retry if we don't NACK.
             return
         else:
             for i in range(0, len(pit_entry.faceids)):
@@ -184,7 +203,7 @@ class BasicICNLayer(LayerProcess):
                 if re_add:
                     indices_to_remove_reverse = indices_to_remove[::-1]
                     for i in indices_to_remove_reverse:
-                        del pit_entry.face_id[i]
+                        del pit_entry.faceids[i]
                         del pit_entry.local_app[i]
                     self.pit.append(pit_entry)
             else:

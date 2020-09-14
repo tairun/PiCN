@@ -14,11 +14,13 @@ from PiCN.Layers.PacketEncodingLayer.Encoder import BasicEncoder
 from PiCN.Packets import Content, Name, Interest, Nack
 from PiCN.Layers.TimeoutPreventionLayer import BasicTimeoutPreventionLayer, TimeoutPreventionMessageDict
 
+from typing import Optional
+
 
 class Fetch(object):
     """Fetch Tool for PiCN"""
 
-    def __init__(self, ip: Name, port: int, log_level=255, encoder: BasicEncoder = None, autoconfig: bool = False,
+    def __init__(self, ip: Name, port: Optional[int], log_level=255, encoder: BasicEncoder = None, autoconfig: bool = False,
                  interfaces=None):
         self.ip = ip
         # create encoder and chunkifyer
@@ -94,3 +96,11 @@ class Fetch(object):
         """Close everything"""
         self.lstack.stop_all()
         self.lstack.close_all()
+
+    def send_content(self, name: Name, content: str):
+        c = Content(name, content, None)
+        if self.autoconfig:
+            self.lstack.queue_from_higher.put([None, c])
+        else:
+            self.lstack.queue_from_higher.put([self.fid, c])
+

@@ -18,7 +18,7 @@ class PendingInterestTableEntry(object):
                  fib_entries_already_used: List[ForwardingInformationBaseEntry] = None, faces_already_nacked=None,
                  number_of_forwards=0, is_session: bool = False):
         self.name = name
-        self.is_session = is_session
+        self._is_session = is_session
         self._faceids: List[int] = []
         if isinstance(faceid, list):
             self._faceids.extend(faceid)
@@ -47,6 +47,10 @@ class PendingInterestTableEntry(object):
         if other is None:
             return False
         return self.name == other.name
+
+    @property
+    def is_session(self):
+        return self._is_session
 
     @property
     def interest(self):
@@ -89,14 +93,6 @@ class PendingInterestTableEntry(object):
         self._local_app = local_app
 
     @property
-    def interest(self):
-        return self._interest
-
-    @interest.setter
-    def interest(self, interest):
-        self._interest = interest
-
-    @property
     def fib_entries_already_used(self):
         return self._fib_entries_already_used
 
@@ -115,6 +111,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
         self.container: List[PendingInterestTableEntry] = []
         self._pit_timeout = pit_timeout
         self._pit_retransmits = pit_retransmits
+        self._session_identifier = 'session_connector'
 
     @abc.abstractmethod
     def add_pit_entry(self, name: Name, faceid: int, interest: Interest = None, local_app: bool = False, is_session: bool = False):
@@ -197,7 +194,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
         self._pit_retransmits = retransmits
 
     def __repr__(self):
-        headers = ['Name', 'FaceIDs', 'Timestamp', 'Retransmits', 'Interest']
-        data = [[entry.name, entry._faceids, entry._timestamp,
-                 entry._retransmits, entry._interest] for entry in self._container]
+        headers = ['Name', 'FaceIDs', 'Timestamp', 'Retransmits', 'Interest', 'Session', 'Local App']
+        data = [[entry.name, entry.faceids, entry.timestamp,
+                 entry.retransmits, entry.interest, entry.is_session, entry.local_app] for entry in self._container]
         return f"Pending Interest Table:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"

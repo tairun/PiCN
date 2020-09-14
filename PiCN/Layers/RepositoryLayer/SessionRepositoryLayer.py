@@ -24,7 +24,8 @@ class SessionRepositoryLayer(LayerProcess):
 
     def _make_session_id(self, bits: int = 16) -> str:
         """
-        Creates a cryptographically-secure, URL-safe string
+        Creates a unique id for an ICN session
+        :param bits: Length of id to create
         """
         return secrets.token_urlsafe(bits)
 
@@ -80,7 +81,9 @@ class SessionRepositoryLayer(LayerProcess):
                 nack = Nack(packet.name, NackReason.NO_CONTENT, interest=packet)
                 to_lower.put([faceid, nack])  # FIXME: queue_to_lower or just to lower? Other instances above?
                 return
-        elif isinstance(packet, Content):  # FIXME: Better use elif here?
-            pass
+        elif isinstance(packet, Content):  # FIXME: Better use elif here? We need to handle incoming content for sessions!
+            self.logger.info(f"---> : Got content WTF ({packet.content})")
+            return
         else:
+            self.logger('No known packet type.')
             pass

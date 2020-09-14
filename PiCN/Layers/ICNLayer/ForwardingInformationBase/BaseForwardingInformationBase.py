@@ -29,6 +29,10 @@ class ForwardingInformationBaseEntry(object):
         return f'<ForwardingInformationBaseEntry {self._name} via {self._faceid}{static} at {id(self)}>'
 
     @property
+    def is_session(self):
+        return self._is_session
+
+    @property
     def name(self):
         return self._name
 
@@ -83,7 +87,7 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
         """Remove all non-static entries from the FIB"""
 
     def __repr__(self):
-        headers = ['Name', 'FaceIDs', 'Static']
-        data = [[entry.name, entry.faceid, entry.static]
+        headers = ['Name', 'FaceIDs', 'Static', 'Session']
+        data = [[entry.name, entry.faceid, entry.static, entry.is_session]
                 for entry in self._container]
         return f"Fowarding Information Base:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
