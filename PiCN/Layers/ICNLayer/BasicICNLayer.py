@@ -157,9 +157,15 @@ class BasicICNLayer(LayerProcess):
             for i in range(0, len(pit_entry.faceids)):
                 if to_higher and pit_entry.local_app[i]:
                     to_higher.put([face_id, content])
+                elif pit_entry.is_session:
+                    if len(pit_entry.faceids) == 2:
+                        other_fid = list(set(pit_entry.faceids) - set([face_id]))[0]
+                        to_lower.put([other_fid, content])
+                    else:
+                        self.logger.error(f"There can only be 2 face id entries when using session (actual length: {len(pit_entry.faceids)})")
                 else:
                     to_lower.put([pit_entry.faceids[i], content])
-            self.pit.remove_pit_entry(pit_entry.name)
+            self.pit.remove_pit_entry(pit_entry.name, incoming_fid=face_id)
             self.cs.add_content_object(content)
 
     def handle_nack(self, face_id: int, nack: Nack, to_lower: multiprocessing.Queue,
@@ -192,7 +198,7 @@ class BasicICNLayer(LayerProcess):
                     if pit_entry.local_app[i] is True:  # Go with NACK first only to app layer if it was requested
                         self.logger.info("Nack goes only to local first")
                         re_add = True
-                self.pit.remove_pit_entry(pit_entry.name)
+                self.pit.remove_pit_entry(pit_entry.name, incoming_fid=face_id)
                 indices_to_remove = []
                 for i in range(0, len(pit_entry.faceids)):
                     if to_higher is not None and pit_entry.local_app[i]:

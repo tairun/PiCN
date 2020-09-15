@@ -122,7 +122,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
         """Find an entry in the PIT"""
 
     @abc.abstractmethod
-    def remove_pit_entry(self, name: Name):
+    def remove_pit_entry(self, name: Name, incoming_fid: int):
         """Remove an entry in the PIT"""
 
     @abc.abstractmethod
