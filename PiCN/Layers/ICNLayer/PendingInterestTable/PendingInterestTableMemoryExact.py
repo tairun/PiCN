@@ -37,13 +37,15 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
 
         for pit_entry in self.container:
             if pit_entry.name == name and f"{self._session_identifier}/" in pit_entry.name.components_to_string():
-                self.add_pit_entry(name=Name('/sid') + [pit_entry.name.components[-1]], faceid=pit_entry.faceids.extend(incoming_fid), is_session=True)
+                print(f"Adding session PIT entry: {Name('/sid') + [pit_entry.name.components[-1]]}")
+                self.add_pit_entry(name=Name('/sid') + [pit_entry.name.components[-1]], interest=pit_entry.interest,
+                                   faceid=pit_entry.faceids.extend(incoming_fid), is_session=True)
 
             if pit_entry.name == name and not pit_entry.is_session:
-                print(f"Removing PIT entry: {pit_entry.name}")
                 to_remove.append(pit_entry)
 
         for r in to_remove:
+            print(f"Removing PIT entry: {r.name}")
             self.container.remove(r)
 
         print(self)

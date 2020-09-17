@@ -161,6 +161,8 @@ class BasePendingInterestTable(BaseICNDataStruct):
 
     def increase_number_of_forwards(self, name):
         pit_entry = self.find_pit_entry(name)
+        if pit_entry == None:
+            return
         self.remove_pit_entry(name)
         pit_entry.number_of_forwards = pit_entry.number_of_forwards + 1
         self.append(pit_entry)
