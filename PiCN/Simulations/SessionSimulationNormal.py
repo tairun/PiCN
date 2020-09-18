@@ -25,7 +25,7 @@ if __name__ == "__main__":
     mgmt_client3 = MgmtClient(icn_forwarder1.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for forwarder 1
 
     # This is unintuitive. Why does the fetch tool add its own face, but the other components don't?
-    fetch0 = Fetch('fw0', None, log_level=0, interfaces=[simulation_bus.add_interface('fetcht0')])  # Initialize a client (fetch tool)
+    fetch0 = Fetch('fw0', None, log_level=255, interfaces=[simulation_bus.add_interface('fetcht0')])  # Initialize a client (fetch tool)
     fetch1 = FetchSessions('fw1', None, log_level=0, interfaces=[simulation_bus.add_interface('fetcht1')])
 
     icn_repo0.start_repo()
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     time.sleep(1)  # Be safe and wait for all processes to start
 
     mgmt_client2.add_face('repo0', None, 0)  # Add new interface to forwarder 0, index has to be 0.
-    mgmt_client2.add_face('fw1', None, 0)  # # Add new interface to forwarder 0, index has to be 0.
+    mgmt_client2.add_face('fw1', None, 0)  # Add new interface to forwarder 0, index has to be 0.
     mgmt_client2.add_forwarding_rule(Name('/test/t1'), [0])  # Add a forward-rule this prefix to interface with index 0.
     mgmt_client2.add_forwarding_rule(Name('/test/t2'), [1])  # Add a forward-rule this prefix to interface with index 1.
     mgmt_client3.add_face('repo1', None, 0)  # Add new interface to forwarder 1, index has to be 0.
@@ -52,18 +52,18 @@ if __name__ == "__main__":
     interest0 = Name('/test/t1/content_object')  # Test routing, no new features.
     interest1 = Name('/test/t2/session_connector')  # Test session connection string. This should return 16bits
 
-    res0 = fetch0.fetch_data(interest0, timeout=20)
-    print(icn_forwarder0.icnlayer.pit)
-    print(f"Return value of fetch0 is: {res0}")
+    #res0 = fetch0.fetch_data(interest0, timeout=20)
+    #print(icn_forwarder0.icnlayer.pit)
+    #print(f"Return value of fetch0 is: {res0}")
 
-    time.sleep(1)
+    #time.sleep(1)
 
     res1 = fetch1.fetch_data(interest1, timeout=20)
     print(icn_forwarder1.icnlayer.pit)
 
     print(f"Return value of fetch1 is: {res1}")
 
-    fetch0.send_content(Name('/test/t1'), 'Hello, is this repo0?')
+    #fetch0.send_content(Name('/test/t1'), 'Hello, is this repo0?')
     fetch1.send_content(Name('/test/t2'), 'Hello, is this repo1?')
 
     time.sleep(5)  # Be safe and wait for all messages to trickle in before shutting down everything

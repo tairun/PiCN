@@ -165,7 +165,7 @@ class BasicICNLayer(LayerProcess):
                         self.logger.error(f"There can only be 2 face id entries when using session (actual length: {len(pit_entry.faceids)})")
                 else:
                     to_lower.put([pit_entry.faceids[i], content])
-            self.pit.remove_pit_entry(pit_entry.name, incoming_fid=face_id)
+            self.pit.remove_pit_entry(pit_entry.name, incoming_fid=face_id, content=content)
             self.cs.add_content_object(content)
 
     def handle_nack(self, face_id: int, nack: Nack, to_lower: multiprocessing.Queue,

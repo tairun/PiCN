@@ -4,11 +4,11 @@ import abc
 import time
 from tabulate import tabulate
 
-from PiCN.Packets import Interest, Name
+from PiCN.Packets import Interest, Name, Content
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
 from PiCN.Layers.ICNLayer import BaseICNDataStruct
 
-from typing import List
+from typing import List, Optional
 
 
 class PendingInterestTableEntry(object):
@@ -122,7 +122,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
         """Find an entry in the PIT"""
 
     @abc.abstractmethod
-    def remove_pit_entry(self, name: Name, incoming_fid: int):
+    def remove_pit_entry(self, name: Name, incoming_fid: Optional[int], content: Optional[Content]):
         """Remove an entry in the PIT"""
 
     @abc.abstractmethod
@@ -198,5 +198,5 @@ class BasePendingInterestTable(BaseICNDataStruct):
     def __repr__(self):
         headers = ['Name', 'FaceIDs', 'Timestamp', 'Retransmits', 'Interest', 'Session', 'Local App']
         data = [[entry.name, entry.faceids, entry.timestamp,
-                 entry.retransmits, entry.interest, entry.is_session, entry.local_app] for entry in self._container]
+                 entry.retransmits, entry.interest.name, entry.is_session, entry.local_app] for entry in self._container]
         return f"Pending Interest Table:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"

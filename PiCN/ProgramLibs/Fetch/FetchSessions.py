@@ -17,7 +17,8 @@ class FetchSessions(Fetch):
         self.ip = ip
         self._session_keys: Dict = dict() if session_keys is None else session_keys  # TODO: Extend this to work with multiple repos (use dict or something).
         self._has_session: bool = True if session_keys is not None else False
-        self._session_identifier = 'session_connector'
+        self._session_initiator = 'session_connector'
+        self._session_identifier = 'sid'
 
     def fetch_data_session(self, name: Name, timeout=4.0) -> Optional[str]:  # TODO: Combine method with other fetch method and use bool to ignore session key.
         """Fetch data from the server via a session
@@ -52,7 +53,7 @@ class FetchSessions(Fetch):
         :param packet Packet with session handshake
         """
         if isinstance(packet, Content):
-            session_confirmation: Interest = Interest(name + Name(f"{self._session_identifier}/{packet.content}"))
+            session_confirmation: Content = Content(name + Name(f"{self._session_identifier}/{packet.content}"))
 
             # Send session ACK
             if self.autoconfig:

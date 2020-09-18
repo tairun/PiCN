@@ -5,7 +5,7 @@ import time
 from PiCN.Layers.ICNLayer.PendingInterestTable.BasePendingInterestTable import BasePendingInterestTable, \
      PendingInterestTableEntry
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
-from PiCN.Packets import Interest, Name
+from PiCN.Packets import Interest, Name, Content
 
 from typing import Optional, Tuple, Union, List
 
@@ -32,14 +32,29 @@ class PendingInterstTableMemoryExact(BasePendingInterestTable):
 
         self.container.append(PendingInterestTableEntry(name, faceid, interest, local_app, is_session=is_session))
 
-    def remove_pit_entry(self, name: Name, incoming_fid: int = None):
+    def remove_pit_entry(self, name: Name, incoming_fid: Optional[int] = None, content: Optional[Content] = None):
         to_remove = []
+        print(self)
+        for pit_entry in self.container:  # FIXED: by Ch. Scherb
+            if pit_entry.name == name and self._session_identifier in pit_entry.name.components_to_string():
+                print("--> : Yes we are inside")
+                print(f"Adding session PIT entry: {Name('/sid') + [content.content]}")
+                faceids = []
+                faceids.extend(pit_entry.faceids)
+                if incoming_fid is not None:
+                    faceids.extend([incoming_fid])
+                self.add_pit_entry(name=Name('/sid') + [content.content], interest=pit_entry.interest,
+                                   faceid=faceids, is_session=True)
 
-        for pit_entry in self.container:
-            if pit_entry.name == name and f"{self._session_identifier}/" in pit_entry.name.components_to_string():
-                print(f"Adding session PIT entry: {Name('/sid') + [pit_entry.name.components[-1]]}")
-                self.add_pit_entry(name=Name('/sid') + [pit_entry.name.components[-1]], interest=pit_entry.interest,
-                                   faceid=pit_entry.faceids.extend(incoming_fid), is_session=True)
+        # for pit_entry in self.container:
+        #     if pit_entry.name == name and f"{self._session_identifier}/" in pit_entry.name.components_to_string():
+        #         session_entry = PendingInterestTableEntry(name=Name('/sid') + [pit_entry.name.components[-1]],
+        #                                                   interest=pit_entry.interest,
+        #                                                   faceid=pit_entry.faceids.extend(incoming_fid),
+        #                                                   is_session=True, local_app=pit_entry.local_app)
+        #         to_add.append(session_entry)
+        #         #self.add_pit_entry(name=Name('/sid') + [pit_entry.name.components[-1]], interest=pit_entry.interest,
+        #         #                   faceid=pit_entry.faceids.extend(incoming_fid), is_session=True, local_app=pit_entry.local_app)
 
             if pit_entry.name == name and not pit_entry.is_session:
                 to_remove.append(pit_entry)
