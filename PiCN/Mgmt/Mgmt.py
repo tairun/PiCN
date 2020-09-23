@@ -20,9 +20,9 @@ from PiCN.Layers.LinkLayer.Interfaces import AddressInfo, BaseInterface, UDP4Int
 class Mgmt(PiCNProcess):
     """Mgmt System for PiCN"""
 
-    def __init__(self, cs: BaseContentStore, fib: BaseForwardingInformationBase, pit:BasePendingInterestTable,
-                 linklayer: LayerProcess, port: int, shutdown = None,
-                 repo_prfx: str=None, repo_path: str=None, log_level=255):
+    def __init__(self, cs: BaseContentStore, fib: BaseForwardingInformationBase, pit: BasePendingInterestTable,
+                 linklayer: LayerProcess, port: int, shutdown=None,
+                 repo_prfx: str = None, repo_path: str = None, log_level=255):
         super().__init__("MgmtSys", log_level)
         self.cs = cs
         self.fib = fib
@@ -40,7 +40,7 @@ class Mgmt(PiCNProcess):
         self.mgmt_sock.listen(5)
         self._buffersize = 8192
         if os.name is not 'nt':
-            self.shutdown = shutdown #function pointer
+            self.shutdown = shutdown  # function pointer
         else:
             self.logger.critical("Shutdown not available on NT platform")
 
