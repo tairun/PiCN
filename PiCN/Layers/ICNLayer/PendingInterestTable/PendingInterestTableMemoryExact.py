@@ -10,7 +10,7 @@ from PiCN.Packets import Interest, Name, Content
 from typing import Optional, Tuple, Union, List
 
 
-class PendingInterstTableMemoryExact(BasePendingInterestTable):
+class PendingInterestTableMemoryExact(BasePendingInterestTable):
     """In-memory Pending Interest Table using exact prefix matching"""
 
     def __init__(self, pit_timeout: int = 4, pit_retransmits: int = 3) -> None:
