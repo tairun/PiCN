@@ -3,7 +3,7 @@
 import multiprocessing
 import unittest
 
-from PiCN.Layers.ICNLayer.PendingInterestTable.PendingInterestTableMemoryExact import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable.PendingInterestTableMemoryExact import PendingInterestTableMemoryExact
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
 from PiCN.Packets import Name
 
@@ -12,7 +12,7 @@ class test_PendingInterstTableMemoryExact(unittest.TestCase):
 
     def setUp(self):
         self.manager = multiprocessing.Manager()
-        self.pit: PendingInterstTableMemoryExact = PendingInterstTableMemoryExact()
+        self.pit: PendingInterestTableMemoryExact = PendingInterestTableMemoryExact()
 
     def tearDown(self):
         pass
