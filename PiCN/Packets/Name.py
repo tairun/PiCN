@@ -107,13 +107,16 @@ class Name(object):
     def __len__(self):
         return len(self._components)
 
+    def __repr__(self):
+        return self.to_string()
+
     def is_prefix_of(self, name):
         """
         Checks if self is prefix of a given name
         :param name: name
         :return: true if self is prefix of given name, false otherwise
         """
-        pfx = os.path.commonprefix([self._components, name._components])
+        pfx = os.path.commonprefix([self._components, name.components])
         return len(pfx) == len(self._components)
 
     def has_prefix(self, name):
