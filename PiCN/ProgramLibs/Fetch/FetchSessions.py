@@ -5,102 +5,116 @@ from PiCN.ProgramLibs.Fetch import Fetch
 from PiCN.Layers.PacketEncodingLayer.Encoder import BasicEncoder
 from PiCN.Packets import Content, Name, Interest, Nack
 
-from typing import Optional, Dict
+from tabulate import tabulate
+
+from typing import Optional, Dict, List, Tuple, Union
 
 
 class FetchSessions(Fetch):
     """Fetch Tool for PiCN supporting sessions"""
 
-    def __init__(self, ip: Name, port: Optional[int], log_level=255, encoder: BasicEncoder = None, autoconfig: bool = False,
-                 interfaces=None, session_keys: Optional[Dict] = None):
-        super().__init__(ip, port, log_level, encoder, autoconfig, interfaces)
+    def __init__(self, ip: str, port: Optional[int], log_level=255, encoder: BasicEncoder = None,
+                 autoconfig: bool = False, interfaces=None, session_keys: Optional[Dict] = None, name: str = None):
+        super().__init__(ip, port, log_level, encoder, autoconfig, interfaces, name)
         self.ip = ip
-        self._session_keys: Dict = dict() if session_keys is None else session_keys  # TODO: Extend this to work with multiple repos (use dict or something).
+        self._pending_sessions: List[Name] = []
+        self._running_sessions: Dict[Name:Name] = dict() if session_keys is None else session_keys
         self._has_session: bool = True if session_keys is not None else False
         self._session_initiator = 'session_connector'
         self._session_identifier = 'sid'
 
-    def fetch_data_session(self, name: Name, timeout=4.0) -> Optional[str]:  # TODO: Combine method with other fetch method and use bool to ignore session key.
-        """Fetch data from the server via a session
-        :param name Name to be fetched
-        :param timeout Timeout to wait for a response. Use 0 for infinity
-        """
-        if not self._has_session:
-            return "Initialize session with repository first. Send interest to session_connector content object."
-        else:
-            interest: Interest = Interest(name)  # create interest
-
-            if self.autoconfig:
-                self.lstack.queue_from_higher.put([None, interest])
-            else:
-                self.lstack.queue_from_higher.put([self.fid, interest])
-
-            if timeout == 0:
-                packet = self.lstack.queue_to_higher.get()[1]
-            else:
-                packet = self.lstack.queue_to_higher.get(timeout=timeout)[1]
-
-            if isinstance(packet, Content):
-                return packet.content
-            if isinstance(packet, Nack):
-                return "Received Nack: " + str(packet.reason.value)
-
-            return None
-
-    def handle_new_session(self, name: Name, packet: Packet) -> None:
+    def handle_session(self, name: Name, packet: Packet) -> None:
         """
         :param name Name to be fetched
         :param packet Packet with session handshake
         """
         if isinstance(packet, Content):
-            session_confirmation: Content = Content(name + Name(f"{self._session_identifier}/{packet.content}"))
+            target_name: Name = Name(f"/{self._session_identifier}/{packet.content}")
+            session_confirmation: Content = Content(target_name, packet.content, None)
 
-            # Send session ACK
-            if self.autoconfig:
-                self.lstack.queue_from_higher.put([None, session_confirmation])
-            else:
-                self.lstack.queue_from_higher.put([self.fid, session_confirmation])
+            self.send_content(content=session_confirmation)
 
-            self._session_keys[packet.name] = packet.content
+            self._running_sessions[name] = target_name
+            self._pending_sessions.remove(name)
             self._has_session = True
 
-    def end_session(self, name: Name) -> None:
+        return None
+
+    def get_session_name(self, name: Name) -> Optional[Name]:
+        """Fetches the session name from the session store. Returns None otherwise
+        param name Name of repository to get session key for
         """
+        if name in self._running_sessions:
+            return self._running_sessions[name]
+        else:
+            return None
+
+    def end_session(self, name: Name) -> None:
+        """Terminates a session by deleting the associated id from the session store.
         param name Name to terminate session with
         """
         # TODO: Implement method. Send interest in the form of Name(/test/t2/session/<id>/remove). Wait for ACK.
-        pass
+        del self._running_sessions[name]
+        self._pending_sessions.remove(name)
+        self._has_session = False if not self._running_sessions else True
 
-    def fetch_data(self, name: Name, timeout=4.0) -> Optional[str]:
+        return None
+
+    def fetch_data(self, name: Name, timeout: float = 4.0, use_session: bool = True) -> Optional[str]:
         """Fetch data from the server
         :param name Name to be fetched
         :param timeout Timeout to wait for a response. Use 0 for infinity
+        :param use_session Set to False if sessions shouldn't be used even if they are available.
         """
-        interest: Interest = Interest(name)  # Create interest
+        if name in self._running_sessions and use_session:  # Create interest with session
+            interest: Interest = Interest(self._running_sessions.get(name))
+        else:  # Create normal interest
+            interest: Interest = Interest(name)
 
+        self.send_interest(interest)
+        packet = self.receive_packet(timeout)
+
+        if self._session_initiator in interest.name.to_string():  # Check if we need to handle session initiation
+            new_name = Name(name.components[:-1])
+            print(f"New Name: {new_name}")
+            self._pending_sessions.append(new_name)
+            self.handle_session(new_name, packet)
+
+        if isinstance(packet, Content):
+            return packet.content
+        elif isinstance(packet, Nack):
+            return f"Received Nack: {str(packet.reason.value)}"
+
+        return None
+
+    def send_interest(self, interest: Interest) -> None:
         if self.autoconfig:
             self.lstack.queue_from_higher.put([None, interest])
         else:
             self.lstack.queue_from_higher.put([self.fid, interest])
 
-        if timeout == 0:
-            packet = self.lstack.queue_to_higher.get()[1]
-        else:
-            packet = self.lstack.queue_to_higher.get(timeout=timeout)[1]
-
-        if isinstance(packet, Content):
-            if self._session_identifier in packet.name.components_to_string():  # Check for second message of handshake
-                self.handle_new_session(name, packet)
-
-            return packet.content
-        elif isinstance(packet, Nack):
-            return "Received Nack: " + str(packet.reason.value)
-
         return None
 
-    def send_content(self, name: Name, content: str):
-        c = Content(name, content, None)
+    def receive_packet(self, timeout: float) -> Packet:
+        if timeout == 0:
+            return self.lstack.queue_to_higher.get()[1]
+        else:
+            return self.lstack.queue_to_higher.get(timeout=timeout)[1]
+
+    def send_content(self, content: Union[Content, Tuple[Name, str]]) -> None:
+        if isinstance(content, Content):
+            c = content
+        else:
+            c = Content(content[0], content[1], None)
+
         if self.autoconfig:
             self.lstack.queue_from_higher.put([None, c])
         else:
             self.lstack.queue_from_higher.put([self.fid, c])
+
+        return None
+
+    def __repr__(self):
+        headers = ['Target', 'Session ID']
+        data = [[k, v] for k, v in self._running_sessions.items()]
+        return f"Running sessions for <<{self.name}>>:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
