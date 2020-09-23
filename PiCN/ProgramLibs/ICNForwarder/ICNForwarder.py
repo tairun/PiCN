@@ -29,10 +29,11 @@ class ICNForwarder(object):
     """A ICN Forwarder using PiCN"""
 
     def __init__(self, port=9000, log_level=255, encoder: BasicEncoder = None, routing: bool = False, peers=None,
-                 autoconfig: bool = False, interfaces: List[BaseInterface] = None, ageing_interval: int = 3):
+                 autoconfig: bool = False, interfaces: List[BaseInterface] = None, ageing_interval: int = 3,
+                 node_name: str = None):
         # debug level
-        logger = Logger("ICNForwarder", log_level)
-
+        logger = Logger("ICNForwarder", log_level)  # FIXME: Why isn't this self.logger???
+        self._node_name = node_name
         # packet encoder
         if encoder is None:
             self.encoder = SimpleStringEncoder(log_level=log_level)
@@ -98,7 +99,15 @@ class ICNForwarder(object):
 
         self.icnlayer.cs = cs
         self.icnlayer.fib = fib
+        # ----- by Luc # FIXME: How to pass these parameters to __init__
+        self.icnlayer.fib._logger = logger
+        self.icnlayer.fib._node_name = self._node_name
+        # ----- by Luc # FIXME: How to pass these parameters to __init__
         self.icnlayer.pit = pit
+        self.icnlayer.pit._logger = logger
+        self.icnlayer.pit._node_name = self._node_name
+        # -----
+
         if autoconfig:
             self.autoconfiglayer.fib = fib
         if routing:
