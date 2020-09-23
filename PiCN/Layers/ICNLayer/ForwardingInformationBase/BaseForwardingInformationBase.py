@@ -5,6 +5,7 @@ import multiprocessing
 
 from PiCN.Layers.ICNLayer import BaseICNDataStruct
 from PiCN.Packets import Name
+from PiCN.Logger import Logger
 from tabulate import tabulate
 
 from typing import List, Optional
@@ -60,8 +61,10 @@ class ForwardingInformationBaseEntry(object):
 class BaseForwardingInformationBase(BaseICNDataStruct):
     """Abstract BaseForwardingInformationBase for usage in BasicICNLayer"""
 
-    def __init__(self):
+    def __init__(self, logger: Logger = None, node_name: str = None):
         super().__init__()
+        self._logger = logger
+        self._node_name = node_name
         self._container: List[ForwardingInformationBaseEntry] = []
         self._manager: Optional[multiprocessing.Manager] = None
 
@@ -90,4 +93,4 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
         headers = ['Name', 'FaceIDs', 'Static', 'Session']
         data = [[entry.name, entry.faceid, entry.static, entry.is_session]
                 for entry in self._container]
-        return f"Fowarding Information Base:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
+        return f"Fowarding Information Base for <<{self._node_name}>>:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
