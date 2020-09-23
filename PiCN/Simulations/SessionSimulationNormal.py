@@ -16,8 +16,8 @@ if __name__ == "__main__":
     icn_repo0 = ICNDataRepository(port=0, prefix=Name('/test/t1'), foldername=None, interfaces=[simulation_bus.add_interface('repo0')], log_level=255)  # Initialize repository 0
     icn_repo1 = ICNDataRepositorySession(port=0, prefix=Name('/test/t2'), foldername=None, interfaces=[simulation_bus.add_interface('repo1')], log_level=0)  # Initialize repository 1 (this one has sessions)
 
-    icn_forwarder0 = ICNForwarder(port=0, log_level=255, interfaces=[simulation_bus.add_interface('fw0')])  # Initialize forwarder 0
-    icn_forwarder1 = ICNForwarder(port=0, log_level=0, interfaces=[simulation_bus.add_interface('fw1')])  # Initialize forwarder 1
+    icn_forwarder0 = ICNForwarder(port=0, log_level=255, interfaces=[simulation_bus.add_interface('fw0')], node_name='forwarder0')  # Initialize forwarder 0
+    icn_forwarder1 = ICNForwarder(port=0, log_level=0, interfaces=[simulation_bus.add_interface('fw1')], node_name='forwarder1')  # Initialize forwarder 1
 
     mgmt_client0 = MgmtClient(icn_repo0.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for repository 0
     mgmt_client1 = MgmtClient(icn_repo1.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for repository 1
@@ -25,8 +25,8 @@ if __name__ == "__main__":
     mgmt_client3 = MgmtClient(icn_forwarder1.mgmt.mgmt_sock.getsockname()[1])  # Mgmt client for forwarder 1
 
     # This is unintuitive. Why does the fetch tool add its own face, but the other components don't?
-    fetch0 = Fetch('fw0', None, log_level=255, interfaces=[simulation_bus.add_interface('fetcht0')])  # Initialize a client (fetch tool)
-    fetch1 = FetchSessions('fw1', None, log_level=0, interfaces=[simulation_bus.add_interface('fetcht1')])
+    fetch0 = Fetch('fw0', None, log_level=255, interfaces=[simulation_bus.add_interface('fetcht0')], name='fetch0')
+    fetch1 = FetchSessions('fw1', None, log_level=0, interfaces=[simulation_bus.add_interface('fetcht1')], name='fetch1')
 
     icn_repo0.start_repo()
     icn_repo1.start_repo()
@@ -52,21 +52,24 @@ if __name__ == "__main__":
     interest0 = Name('/test/t1/content_object')  # Test routing, no new features.
     interest1 = Name('/test/t2/session_connector')  # Test session connection string. This should return 16bits
 
-    #res0 = fetch0.fetch_data(interest0, timeout=20)
-    #print(icn_forwarder0.icnlayer.pit)
-    #print(f"Return value of fetch0 is: {res0}")
+    # res0 = fetch0.fetch_data(interest0, timeout=20)
+    # print(icn_forwarder0.icnlayer.pit)
+    # print(f"Return value of fetch0 is: {res0}")
 
-    #time.sleep(1)
+    # time.sleep(1)
 
     res1 = fetch1.fetch_data(interest1, timeout=20)
-    print(icn_forwarder1.icnlayer.pit)
 
-    print(f"Return value of fetch1 is: {res1}")
+    time.sleep(5)
 
-    #fetch0.send_content(Name('/test/t1'), 'Hello, is this repo0?')
-    fetch1.send_content(Name('/test/t2'), 'Hello, is this repo1?')
+    print(f"Running sessions in repo:\n{icn_repo1.repolayer._running_sessions}")
+    print(fetch1)
+    print(icn_forwarder1.icnlayer.fib)
 
-    time.sleep(5)  # Be safe and wait for all messages to trickle in before shutting down everything
+    # fetch0.send_content(Name('/test/t1'), 'Hello, is this repo0?')
+    fetch1.send_content((fetch1.get_session_name(Name('/test/t2')), 'Hello, is this repo1?'))
+
+    time.sleep(1)  # Be safe and wait for all messages to trickle in before shutting down everything
 
     icn_forwarder0.stop_forwarder()
     icn_forwarder1.stop_forwarder()
