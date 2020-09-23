@@ -13,7 +13,7 @@ from PiCN.Layers.LinkLayer import BasicLinkLayer
 from PiCN.Layers.RepositoryLayer import BasicRepositoryLayer
 from PiCN.Layers.AutoconfigLayer import AutoconfigServerLayer, AutoconfigClientLayer, AutoconfigRepoLayer
 from PiCN.Layers.ICNLayer.ContentStore import ContentStoreMemoryExact
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
 from PiCN.Layers.ChunkLayer import BasicChunkLayer
 from PiCN.Layers.ChunkLayer.Chunkifyer import SimpleContentChunkifyer
@@ -29,7 +29,7 @@ class AutoConfigFullStackTestSimulation(object):
     def setUp(self):
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register('cs', ContentStoreMemoryExact)
-        synced_data_struct_factory.register('pit', PendingInterstTableMemoryExact)
+        synced_data_struct_factory.register('pit', PendingInterestTableMemoryExact)
         synced_data_struct_factory.register('fib', ForwardingInformationBaseMemoryPrefix)
         synced_data_struct_factory.register('faceidtable', FaceIDDict)
         synced_data_struct_factory.create_manager()
