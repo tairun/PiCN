@@ -7,6 +7,7 @@ from tabulate import tabulate
 from PiCN.Packets import Interest, Name, Content
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseEntry
 from PiCN.Layers.ICNLayer import BaseICNDataStruct
+from PiCN.Logger import Logger
 
 from typing import List, Optional
 
@@ -106,12 +107,15 @@ class BasePendingInterestTable(BaseICNDataStruct):
     :param pit_timeout: timeout for a pit entry when calling the ageing function
     """
 
-    def __init__(self, pit_timeout: int = 10, pit_retransmits: int = 3):
+    def __init__(self, pit_timeout: int = 10, pit_retransmits: int = 3, logger: Logger = None, node_name: str = None):
         super().__init__()
         self.container: List[PendingInterestTableEntry] = []
         self._pit_timeout = pit_timeout
         self._pit_retransmits = pit_retransmits
-        self._session_identifier = 'session_connector'
+        self._logger = logger
+        self._node_name = node_name
+        self._session_initiator = 'session_connector'
+        self._session_identifier = 'sid'
 
     @abc.abstractmethod
     def add_pit_entry(self, name: Name, faceid: int, interest: Interest = None, local_app: bool = False, is_session: bool = False):
@@ -161,7 +165,7 @@ class BasePendingInterestTable(BaseICNDataStruct):
 
     def increase_number_of_forwards(self, name):
         pit_entry = self.find_pit_entry(name)
-        if pit_entry == None:
+        if pit_entry is None:
             return
         self.remove_pit_entry(name)
         pit_entry.number_of_forwards = pit_entry.number_of_forwards + 1
@@ -199,4 +203,4 @@ class BasePendingInterestTable(BaseICNDataStruct):
         headers = ['Name', 'FaceIDs', 'Timestamp', 'Retransmits', 'Interest', 'Session', 'Local App']
         data = [[entry.name, entry.faceids, entry.timestamp,
                  entry.retransmits, entry.interest.name, entry.is_session, entry.local_app] for entry in self._container]
-        return f"Pending Interest Table:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
+        return f"Pending Interest Table for <<{self._node_name}>>:\n{tabulate(data, headers=headers, showindex=True, tablefmt='fancy_grid')}"
