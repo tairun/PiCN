@@ -38,6 +38,8 @@ class BasicChunkLayer(LayerProcess):
             manager = multiprocessing.Manager()
         self._chunk_table: Dict[Name, (Content, float)] = manager.dict()
         self._request_table: List[RequestTableEntry] = manager.list()
+        self._session_initiator: str = 'session_connector'
+        self._session_identifier = 'sid'
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         self.logger.info("Got Data from higher")
@@ -88,6 +90,8 @@ class BasicChunkLayer(LayerProcess):
             self.logger.info("Packet is Content")
             request_table_entry = self.get_request_table_entry(packet.name)
             if request_table_entry is None:
+                if self._session_identifier in packet.name.to_string():
+                    to_higher.put([faceid, packet])
                 return
             self._request_table.remove(request_table_entry)
             if request_table_entry.chunked is False: #not chunked content
