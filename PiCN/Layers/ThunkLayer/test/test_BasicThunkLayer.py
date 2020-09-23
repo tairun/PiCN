@@ -7,7 +7,7 @@ import os
 
 from PiCN.Layers.ThunkLayer import BasicThunkLayer
 from PiCN.Packets import Interest, Content, Nack, NackReason, Name
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Layers.ICNLayer.ContentStore import ContentStoreMemoryExact
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
 from PiCN.Layers.LinkLayer.FaceIDTable import FaceIDDict
@@ -38,7 +38,7 @@ class test_BasicThunkLayer(unittest.TestCase):
 
         factory.register("cs", ContentStoreMemoryExact)
         factory.register("fib", ForwardingInformationBaseMemoryPrefix)
-        factory.register("pit", PendingInterstTableMemoryExact)
+        factory.register("pit", PendingInterestTableMemoryExact)
         factory.register("faceidtable", FaceIDDict)
         factory.register("thunkTable", ThunkList)
         factory.register("planTable", PlanTable)
