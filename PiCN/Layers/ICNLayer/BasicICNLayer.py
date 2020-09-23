@@ -25,7 +25,9 @@ class BasicICNLayer(LayerProcess):
         self.rib = rib
         self._ageing_interval: int = ageing_interval
         self._interest_to_app: bool = False
-        self._session_identifier = 'session_connector'
+        self._session_initiator = 'session_connector'
+        self._session_initiator = 'session_connector'
+        self._session_identifier = 'sid'
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         high_level_id = data[0]
@@ -107,14 +109,12 @@ class BasicICNLayer(LayerProcess):
 
         pit_entry = self.pit.find_pit_entry(interest.name)
 
-        # TODO: Delete when done: Why do we add a PIT entry if there is already one in the table? What does local_app do?
         if pit_entry is not None:
             self.logger.info("Found in PIT, appending")
             self.pit.update_timestamp(pit_entry)
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
             return
 
-        # TODO: Delete when done: Not interesting for sessions?
         if self._interest_to_app is True and to_higher is not None:  # App layer support
             self.logger.info("Sending to higher Layer")
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
@@ -123,11 +123,9 @@ class BasicICNLayer(LayerProcess):
 
         new_face_id = self.fib.find_fib_entry(interest.name, None, [face_id])  # TODO: Delete when done: Checks FIB rules set by MGMT tool?
 
-        # TODO: Delete when done: There is a forwarding rule in the FIB, use it to create PIT
         if new_face_id is not None:
             self.logger.info("Found in FIB, forwarding to Face: " + str(new_face_id.faceid))
 
-            # TODO: Check for session and create PIT accordingly
             self.pit.add_pit_entry(interest.name, face_id, interest, local_app=from_local)
 
             for fid in new_face_id.faceid:
@@ -139,15 +137,16 @@ class BasicICNLayer(LayerProcess):
         self.logger.info("No FIB entry, sending Nack")
         nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
         if from_local:
-            to_higher.put([face_id, nack])  # FIXME
+            to_higher.put([face_id, nack])  # FIXME: Why is reference to_higher = None?
         else:
             to_lower.put([face_id, nack])
 
-    # TODO: Delete when done: Maybe split in handle_content_from_lower and handle_content_from_higher?
     def handle_content(self, face_id: int, content: Content, to_lower: multiprocessing.Queue,
                        to_higher: multiprocessing.Queue, from_local: bool = False):
         self.logger.info("Handling Content " + str(content.name) + " " + str(content.content))
         pit_entry = self.pit.find_pit_entry(content.name)
+        fib_entry = self.fib.find_fib_entry(content.name)
+        self.logger.info(f"Found FIB entry for name: {content.name}: {fib_entry}")
 
         if pit_entry is None:
             self.logger.info("No PIT entry for content object available, dropping")
@@ -155,16 +154,20 @@ class BasicICNLayer(LayerProcess):
             return
         else:
             for i in range(0, len(pit_entry.faceids)):
-                if to_higher and pit_entry.local_app[i]:
+                if to_higher and pit_entry.local_app[i]:  # FIXME: Why check for to_higher? (Its already highest layer??)
                     to_higher.put([face_id, content])
                 elif pit_entry.is_session:
                     if len(pit_entry.faceids) == 2:
                         other_fid = list(set(pit_entry.faceids) - set([face_id]))[0]
                         to_lower.put([other_fid, content])
+                    if fib_entry is None:
+                        self.logger.info(f"--> : We are adding FIBs now {content.name}")
+                        self.fib.add_fib_entry(content.name, [face_id], static=True, is_session=True)
                     else:
-                        self.logger.error(f"There can only be 2 face id entries when using session (actual length: {len(pit_entry.faceids)})")
+                        self.logger.error(f"There can only be 2 face id entries when using sessions (actual length: {len(pit_entry.faceids)})")
                 else:
                     to_lower.put([pit_entry.faceids[i], content])
+
             self.pit.remove_pit_entry(pit_entry.name, incoming_fid=face_id, content=content)
             self.cs.add_content_object(content)
 
