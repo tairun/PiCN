@@ -3,7 +3,7 @@
 from PiCN.LayerStack.LayerStack import LayerStack
 from PiCN.Layers.ICNLayer import BasicICNLayer
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Layers.RoutingLayer import BasicRoutingLayer
 from PiCN.Layers.RoutingLayer.RoutingInformationBase import TreeRoutingInformationBase
 from PiCN.Layers.PacketEncodingLayer import BasicPacketEncodingLayer
@@ -46,7 +46,7 @@ class ICNForwarder(object):
         synced_data_struct_factory.register(
             "fib", ForwardingInformationBaseMemoryPrefix)
         synced_data_struct_factory.register(
-            "pit", PendingInterstTableMemoryExact)
+            "pit", PendingInterestTableMemoryExact)
         synced_data_struct_factory.register("rib", TreeRoutingInformationBase)
         synced_data_struct_factory.register("faceidtable", FaceIDDict)
         synced_data_struct_factory.create_manager()
