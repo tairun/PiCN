@@ -35,32 +35,22 @@ class PendingInterestTableMemoryExact(BasePendingInterestTable):
     def remove_pit_entry(self, name: Name, incoming_fid: Optional[int] = None, content: Optional[Content] = None):
         to_remove = []
         print(self)
-        for pit_entry in self.container:  # FIXED: by Ch. Scherb
-            if pit_entry.name == name and self._session_identifier in pit_entry.name.components_to_string():
-                print("--> : Yes we are inside")
-                print(f"Adding session PIT entry: {Name('/sid') + [content.content]}")
+
+        for pit_entry in self.container:  # FIXED: by C. Scherb
+            if pit_entry.name == name and self._session_initiator in pit_entry.name.components_to_string() and content is not None:
+                print(f"--> : Adding session PIT entry: {Name('/sid') + [content.content]}")
                 faceids = []
                 faceids.extend(pit_entry.faceids)
                 if incoming_fid is not None:
                     faceids.extend([incoming_fid])
                 self.add_pit_entry(name=Name('/sid') + [content.content], interest=pit_entry.interest,
-                                   faceid=faceids, is_session=True)
-
-        # for pit_entry in self.container:
-        #     if pit_entry.name == name and f"{self._session_identifier}/" in pit_entry.name.components_to_string():
-        #         session_entry = PendingInterestTableEntry(name=Name('/sid') + [pit_entry.name.components[-1]],
-        #                                                   interest=pit_entry.interest,
-        #                                                   faceid=pit_entry.faceids.extend(incoming_fid),
-        #                                                   is_session=True, local_app=pit_entry.local_app)
-        #         to_add.append(session_entry)
-        #         #self.add_pit_entry(name=Name('/sid') + [pit_entry.name.components[-1]], interest=pit_entry.interest,
-        #         #                   faceid=pit_entry.faceids.extend(incoming_fid), is_session=True, local_app=pit_entry.local_app)
+                                   faceid=faceids, is_session=True, local_app=[False, False])
 
             if pit_entry.name == name and not pit_entry.is_session:
                 to_remove.append(pit_entry)
 
         for r in to_remove:
-            print(f"Removing PIT entry: {r.name}")
+            print(f"--> : Removing PIT entry: {r.name}")
             self.container.remove(r)
 
         print(self)
@@ -116,7 +106,7 @@ class PendingInterestTableMemoryExact(BasePendingInterestTable):
         for pit_entry in self.container:
             if pit_entry.timestamp + self._pit_timeout < cur_time and pit_entry.retransmits > self._pit_retransmits and not pit_entry.is_session:
                 remove.append(pit_entry)
-            elif not pit_entry.is_session:  # FIXME: Eventually we will have to let session die?
+            elif not pit_entry.is_session:  # FIXME: Eventually we will have to let sessions die?
                 pit_entry.retransmits = pit_entry.retransmits + 1
                 updated.append(pit_entry)
             else:
