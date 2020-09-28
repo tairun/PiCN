@@ -75,7 +75,7 @@ class FetchSessions(Fetch):
 
     def _receive_session(self, queue: Queue, polling_interval: float, mutex: Lock):
         while True:
-            self._logger.debug(f"--> : Waiting for mutex ...")
+            self._logger.debug(f"--> : Waiting for mutex in loop ...")
             mutex.acquire(blocking=True)
             packet = None
 
@@ -86,6 +86,8 @@ class FetchSessions(Fetch):
 
             if isinstance(packet, Content):
                 print(f"--> : Receive loop got: {packet.content}")
+            elif isinstance(packet, Nack):
+                self._logger.debug(f"--> One time receive got Nack: {packet.reason}")
             elif packet is None:
                 self._logger.debug(f"--> : No packet in queue")
             else:
@@ -115,8 +117,10 @@ class FetchSessions(Fetch):
             self.handle_session(new_name, packet)
 
         if isinstance(packet, Content):
+            self._logger.debug(f"--> One time receive got content: {packet.content}")
             return packet.content
         elif isinstance(packet, Nack):
+            self._logger.debug(f"--> One time receive got nack: {packet.reason}")
             return f"Received Nack: {str(packet.reason.value)}"
 
         return None
@@ -134,6 +138,7 @@ class FetchSessions(Fetch):
             packet = self.lstack.queue_to_higher.get()[1]
         else:
             packet = self.lstack.queue_to_higher.get(timeout=timeout)[1]
+
         return packet
 
     def send_content(self, content: Union[Content, Tuple[Name, str]]) -> None:

@@ -29,6 +29,7 @@ class SessionRepositoryLayer(LayerProcess):
     def send_content(self, content: str):
         self.logger.debug(f"--> : Sending content to all sessions")
         self.logger.debug(self._running_sessions)
+
         for sid, faceid in self._running_sessions.items():
             c = Content(sid, content, None)
             self.logger.info(f"--> : Sending content ({content}) to session ({sid}) on face id {faceid}")
@@ -93,3 +94,7 @@ class SessionRepositoryLayer(LayerProcess):
         else:
             self.logger('No known packet type.')
             pass
+
+    @property
+    def running_sessions(self) -> Dict[Name, int]:
+        return self._running_sessions

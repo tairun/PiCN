@@ -70,7 +70,7 @@ if __name__ == "__main__":
 
     time.sleep(5)
 
-    icn_repo1.repolayer.send_content(content = 'Whatever I want, whenever I want it.')
+    icn_repo1.repolayer.send_content(content='Whatever I want, whenever I want it.')
 
     time.sleep(1)  # Be safe and wait for all messages to trickle in before shutting down everything
 
