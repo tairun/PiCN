@@ -62,12 +62,15 @@ if __name__ == "__main__":
 
     time.sleep(5)
 
-    print(f"Running sessions in repo:\n{icn_repo1.repolayer._running_sessions}")
     print(fetch1)
     print(icn_forwarder1.icnlayer.fib)
 
     # fetch0.send_content(Name('/test/t1'), 'Hello, is this repo0?')
     fetch1.send_content((fetch1.get_session_name(Name('/test/t2')), 'Hello, is this repo1?'))
+
+    time.sleep(5)
+
+    icn_repo1.repolayer.send_content(content = 'Whatever I want, whenever I want it.')
 
     time.sleep(1)  # Be safe and wait for all messages to trickle in before shutting down everything
 

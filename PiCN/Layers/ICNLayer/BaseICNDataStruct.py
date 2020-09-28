@@ -3,6 +3,7 @@
 import abc
 from typing import List
 
+
 class BaseICNDataStruct(object):
 
     def __init__(self):

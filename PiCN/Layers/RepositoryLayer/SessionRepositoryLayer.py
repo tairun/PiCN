@@ -7,7 +7,7 @@ from PiCN.Layers.RepositoryLayer.Repository import BaseRepository
 from PiCN.Packets import Interest, Content, Packet, Nack, NackReason, Name
 from PiCN.Processes import LayerProcess
 
-from typing import List
+from typing import List, Union, Dict
 
 
 class SessionRepositoryLayer(LayerProcess):
@@ -20,8 +20,19 @@ class SessionRepositoryLayer(LayerProcess):
         self._propagate_interest: bool = propagate_interest
         self._session_initiator: str = 'session_connector'
         self._session_identifier = 'sid'
-        self._pending_sessions: List[str] = []  # TODO: Implement session initiation procedure (handshake).
-        self._running_sessions: List[str] = []  # TODO: Implement better data structure to handle sessions. HashMap?
+        self._pending_sessions: Dict[Name, int] = dict()  # TODO: Implement session initiation procedure (handshake).
+        self._running_sessions: Dict[Name, int] = dict()  # TODO: Implement better data structure to handle sessions. HashMap?
+
+    def _broadcast_reconnect(self, sid: str, max_hops: int = 5) -> None:
+        pass
+
+    def send_content(self, content: str):
+        self.logger.debug(f"--> : Sending content to all sessions")
+        self.logger.debug(self._running_sessions)
+        for sid, faceid in self._running_sessions.items():
+            c = Content(sid, content, None)
+            self.logger.info(f"--> : Sending content ({content}) to session ({sid}) on face id {faceid}")
+            self.queue_to_lower.put([faceid, c])
 
     def _make_session_id(self, bits: int = 16) -> str:
         """
@@ -47,7 +58,7 @@ class SessionRepositoryLayer(LayerProcess):
                 self.logger.info('--> : Session packet detected.')
                 if packet.name.components[-1].decode() == self._session_initiator:  # Detect incoming handshake (if session_connector is the last component of interest name)
                     session_id: str = self._make_session_id()
-                    self._pending_sessions.append(session_id)
+                    self._pending_sessions[Name(f"/{self._session_identifier}") + session_id] = faceid
                     c = Content(packet.name, session_id, None)
                     self.logger.info('--> : Request to initiate session. Sending key down.')
                     self.queue_to_lower.put([faceid, c])  # Sending session id as content packet
@@ -71,16 +82,13 @@ class SessionRepositoryLayer(LayerProcess):
                 to_lower.put([faceid, nack])  # FIXME: queue_to_lower or just to lower? Other instances above?
                 return
         elif isinstance(packet, Content):  # FIXME: Better use elif here? We need to handle incoming content for sessions!
-            self.logger.info(f"--> : Got content WTF ({packet.content})")
-            if self._session_identifier in packet.name.to_string() and packet.name.components[-1].decode() in self._pending_sessions:  # Detect third part of handshake and store session (if session id is last part of interest name)
+            self.logger.info(f"--> : Got content in repository ({packet.content})")
+            if self._session_identifier in packet.name.to_string() and packet.name in self._pending_sessions:  # Detect third part of handshake and store session (if session id is last part of interest name)
                 session_id: str = packet.name.components[-1].decode()
-                self._running_sessions.append(session_id)
-                self._pending_sessions.remove(session_id)
+                self._running_sessions[Name(f"/{self._session_identifier}") + session_id] = faceid
+                del self._pending_sessions[Name(f"/{self._session_identifier}") + session_id]
                 self.logger.info(f"--> : Session with id {session_id} established.")
                 self.logger.info(f"--> : Running sessions for repo: {self._running_sessions}")
-                #c = Content(packet.name, None, None)
-                #self.logger.info('--> : Sending empty content to stop retransmit.')  # FIXME: Better solution to not trigger retransmits?
-                #self.queue_to_lower.put([faceid, c])  # Sending session id as content packet
             return
         else:
             self.logger('No known packet type.')

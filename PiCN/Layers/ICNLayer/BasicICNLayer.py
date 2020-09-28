@@ -158,13 +158,15 @@ class BasicICNLayer(LayerProcess):
                     to_higher.put([face_id, content])
                 elif pit_entry.is_session:
                     if len(pit_entry.faceids) == 2:
-                        other_fid = list(set(pit_entry.faceids) - set([face_id]))[0]
+                        other_fids = list(set(pit_entry.faceids) - set([face_id]))
+                        other_fid = other_fids[0]
                         to_lower.put([other_fid, content])
                     if fib_entry is None:
                         self.logger.info(f"--> : We are adding FIBs now {content.name}")
                         self.fib.add_fib_entry(content.name, [face_id], static=True, is_session=True)
                     else:
-                        self.logger.error(f"There can only be 2 face id entries when using sessions (actual length: {len(pit_entry.faceids)})")
+                        self.logger.error(f"--> : There can only be 2 face id entries when using sessions (actual length: {len(pit_entry.faceids)})")
+                        self.logger.error(f"--> : Or this might be some other thing: {content.content}")
                 else:
                     to_lower.put([pit_entry.faceids[i], content])
 

@@ -89,6 +89,22 @@ class BaseForwardingInformationBase(BaseICNDataStruct):
     def clear(self):
         """Remove all non-static entries from the FIB"""
 
+    @property
+    def logger(self):
+        return self._logger
+
+    @logger.setter
+    def logger(self, logger):
+        self._logger = logger
+
+    # @property
+    # def node_name(self):
+    #     return self._node_name
+    #
+    # @node_name.setter
+    def node_name(self, node_name):
+        self._node_name = node_name
+
     def __repr__(self):
         headers = ['Name', 'FaceIDs', 'Static', 'Session']
         data = [[entry.name, entry.faceid, entry.static, entry.is_session]

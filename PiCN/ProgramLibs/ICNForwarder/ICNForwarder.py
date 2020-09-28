@@ -100,12 +100,12 @@ class ICNForwarder(object):
         self.icnlayer.cs = cs
         self.icnlayer.fib = fib
         # ----- by Luc # FIXME: How to pass these parameters to __init__
-        self.icnlayer.fib._logger = logger
-        self.icnlayer.fib._node_name = self._node_name
+        self.icnlayer.fib.logger = logger
+        self.icnlayer.fib.node_name = self._node_name
         # ----- by Luc # FIXME: How to pass these parameters to __init__
         self.icnlayer.pit = pit
-        self.icnlayer.pit._logger = logger
-        self.icnlayer.pit._node_name = self._node_name
+        self.icnlayer.pit.logger = logger
+        self.icnlayer.pit.node_name = self._node_name
         # -----
 
         if autoconfig:

@@ -157,6 +157,22 @@ class BasePendingInterestTable(BaseICNDataStruct):
     def get_already_used_pit_entries(self, name: Name):
         """Get already used fib entries"""
 
+    @property
+    def logger(self):
+        return self._logger
+
+    @logger.setter
+    def logger(self, logger):
+        self._logger = logger
+
+    # @property
+    # def node_name(self):
+    #     return self._node_name
+    #
+    # @node_name.setter
+    def node_name(self, node_name):
+        self._node_name = node_name
+
     def set_number_of_forwards(self, name, forwards):
         pit_entry = self.find_pit_entry(name)
         self.remove_pit_entry(name)
