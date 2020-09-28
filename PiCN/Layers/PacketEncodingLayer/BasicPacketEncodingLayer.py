@@ -22,7 +22,7 @@ class BasicPacketEncodingLayer(LayerProcess):
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         face_id, packet = self.check_data(data)
-        if face_id == None or packet is None:
+        if face_id is None or packet is None:
             return
         self.logger.info("Packet from higher, Faceid: " + str(face_id) + ", Name: " + str(packet.name))
         encoded_packet = self.encode(packet)
@@ -33,7 +33,7 @@ class BasicPacketEncodingLayer(LayerProcess):
 
     def data_from_lower(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         face_id, packet = self.check_data(data)
-        if face_id == None or packet == None:
+        if face_id is None or packet is None:
             return
         decoded_packet = self.decode(packet)
         if decoded_packet is None:
@@ -54,9 +54,9 @@ class BasicPacketEncodingLayer(LayerProcess):
         """check if data from queue match the requirements"""
         if len(data) != 2:
             self.logger.warning("PacketEncoding Layer expects queue elements to have size 2")
-            return (None, None)
-        if type(data[0]) != int:
-            self.logger.warning("PacketEncoding Layer expects first element to be a faceid (int)")
-            return (None, None)
-        #TODO test if data[1] has type packet or bin data? howto?
+            return None, None
+        if type(data[0]) != int or data[0] != 'broadcast':
+            self.logger.warning("PacketEncoding Layer expects first element to be a faceid (int) or 'broadcast'")
+            return None, None
+        # TODO test if data[1] has type packet or bin data? How to?
         return data[0], data[1]
