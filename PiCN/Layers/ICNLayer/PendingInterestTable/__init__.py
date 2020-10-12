@@ -3,4 +3,4 @@
 
 from .BasePendingInterestTable import BasePendingInterestTable
 from .BasePendingInterestTable import PendingInterestTableEntry
-from .PendingInterestTableMemoryExact import PendingInterstTableMemoryExact
+from .PendingInterestTableMemoryExact import PendingInterestTableMemoryExact

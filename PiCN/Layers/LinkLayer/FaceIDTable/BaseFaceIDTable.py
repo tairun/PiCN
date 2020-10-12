@@ -4,6 +4,7 @@ import abc
 
 from PiCN.Layers.LinkLayer.Interfaces import AddressInfo
 
+
 class BaseFaceIDTable(object):
     """Abstract superclass for FaceID Tables"""
 
@@ -47,9 +48,14 @@ class BaseFaceIDTable(object):
     @abc.abstractmethod
     def get_num_entries(self):
         """returns the current number of entries in the table
-        @:return: current number of entries in the table
+        :return: current number of entries in the table
         """
 
+    @abc.abstractmethod
+    def get_faceids(self):
+        """Returns all connected faceids
+        :return: iterable with all connected faceids
+        """
 
     def get_or_create_faceid(self, address_info: AddressInfo) -> int:
         """adds and entry and automatically selects a faceid or if an entry exits select that entry

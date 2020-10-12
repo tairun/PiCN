@@ -1,10 +1,9 @@
 """Internal representation of network name"""
 
-from typing import List, Union
-
 import binascii
 import json
 import os
+
 from typing import List, Union
 
 
@@ -49,7 +48,7 @@ class Name(object):
 
     def to_json(self) -> str:
         """encoded name as JSON"""
-        n = {}
+        n = dict()
         n['suite'] = self.suite
         n['comps'] = [binascii.hexlify(c).decode('ascii', 'replace') for c in self._components]
         if self.digest:
@@ -63,7 +62,7 @@ class Name(object):
         self.digest = binascii.dehexlify(n['dgest']) if 'dgest' in n else None
         return self
 
-    def setDigest(self, digest: str = None):
+    def set_digest(self, digest: str = None):
         self.digest = digest
         return self
 
@@ -80,7 +79,7 @@ class Name(object):
             return False
         return self.to_string() == other.to_string()
 
-    def __add__(self, other) -> 'Name':
+    def __add__(self, other: Union['Name', str, List[str], List[bytes]]) -> 'Name':
         components: List[bytes] = []
         for c in self._components:
             components.append(c)
@@ -88,7 +87,7 @@ class Name(object):
             for comp in other:
                 if type(comp) is str:
                     components.append(comp.encode('ascii'))
-                elif type(comp) is bytes:
+                elif type(comp) is bytes: # FIXME: Handle bytes correctly, this won't work: Name('/Hello') + b'world'
                     components.append(comp)
                 else:
                     raise TypeError('Not a Name, str, List[str] or List[bytes]')
@@ -107,13 +106,16 @@ class Name(object):
     def __len__(self):
         return len(self._components)
 
+    def __repr__(self):
+        return self.to_string()
+
     def is_prefix_of(self, name):
         """
         Checks if self is prefix of a given name
         :param name: name
         :return: true if self is prefix of given name, false otherwise
         """
-        pfx = os.path.commonprefix([self._components, name._components])
+        pfx = os.path.commonprefix([self._components, name.components])
         return len(pfx) == len(self._components)
 
     def has_prefix(self, name):

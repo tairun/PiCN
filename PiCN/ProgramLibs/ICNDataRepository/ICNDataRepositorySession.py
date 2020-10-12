@@ -1,13 +1,14 @@
-"""A ICN Repository using PiCN"""
+"""A ICN Repository using PiCN and supports sessions"""
 
-from typing import Optional, List
+from typing import Optional
 
 import multiprocessing
+from typing import List
 
 from PiCN.LayerStack.LayerStack import LayerStack
 from PiCN.Layers.ChunkLayer import BasicChunkLayer
 from PiCN.Layers.PacketEncodingLayer import BasicPacketEncodingLayer
-from PiCN.Layers.RepositoryLayer import BasicRepositoryLayer
+from PiCN.Layers.RepositoryLayer import SessionRepositoryLayer
 from PiCN.Layers.AutoconfigLayer import AutoconfigRepoLayer
 
 from PiCN.Layers.ChunkLayer.Chunkifyer import SimpleContentChunkifyer
@@ -27,8 +28,8 @@ from PiCN.Packets import Name
 from PiCN.Mgmt import Mgmt
 
 
-class ICNDataRepository(object):
-    """A ICN Repository using PiCN"""
+class ICNDataRepositorySession(object):
+    """A ICN Repository using PiCN and supports sessions"""
 
     def __init__(self, foldername: Optional[str], prefix: Name,
                  port=9000, log_level=255, encoder: BasicEncoder = None,
@@ -38,8 +39,8 @@ class ICNDataRepository(object):
         :param foldername: If None, use an in-memory repository. Else, use a file system repository.
         """
 
-        logger = Logger("ICNRepo", log_level)
-        logger.info("Start PiCN Data Repository")
+        logger = Logger("ICNRepoSession", log_level)
+        logger.info("Start PiCN Data Repository with Sessions")
 
         # packet encoder
         if encoder is None:
@@ -84,7 +85,7 @@ class ICNDataRepository(object):
         self.linklayer = BasicLinkLayer(interfaces, faceidtable, log_level=log_level)
         self.packetencodinglayer = BasicPacketEncodingLayer(self.encoder, log_level=log_level)
         self.chunklayer = BasicChunkLayer(self.chunkifyer, log_level=log_level)
-        self.repolayer = BasicRepositoryLayer(self.repo, log_level=log_level)
+        self.repolayer = SessionRepositoryLayer(self.repo, log_level=log_level)
 
         if use_thunks:
             self.thunklayer = BasicThunkLayer(None, None, None, faceidtable, thunktable, plantable, self.parser, self.repo, log_level=log_level)

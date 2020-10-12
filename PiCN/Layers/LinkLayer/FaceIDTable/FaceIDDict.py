@@ -2,7 +2,7 @@
 
 import time
 
-from typing import Dict
+from typing import Dict, List
 
 from PiCN.Layers.LinkLayer.FaceIDTable import BaseFaceIDTable
 from PiCN.Layers.LinkLayer.Interfaces import AddressInfo
@@ -32,10 +32,12 @@ class FaceIDDict(BaseFaceIDTable):
     def remove(self, faceid: int):
         if faceid in self.faceid_to_addrinfo:
             addr_info = self.get_address_info(faceid)
+
             try:
-                addr_info.inferface.close()
+                addr_info.address.close()  # FIXME: Why interface.close?
             except:
                 pass
+
             del self.faceid_to_addrinfo[faceid]
             del self.addrinfo_to_faceid[addr_info]
             self.faceids.remove(faceid)
@@ -47,3 +49,6 @@ class FaceIDDict(BaseFaceIDTable):
 
     def get_num_entries(self):
         return len(self.faceids)
+
+    def get_faceids(self) -> List[int]:
+        return self.faceids

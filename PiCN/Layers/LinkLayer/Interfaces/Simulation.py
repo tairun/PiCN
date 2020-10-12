@@ -71,12 +71,11 @@ class SimulationInterface(BaseInterface):
         self.queue_from_bus.close()
 
 
-
 class SimulationBus(PiCNProcess):
     """Simulation Bus that dispatches the communication between nodes in a Simulation"""
 
-    def __init__(self, packetencoder: BasicEncoder=SimpleStringEncoder(), print_keep_alive=True,
-                 log_level = logging.DEBUG):
+    def __init__(self, packetencoder: BasicEncoder = SimpleStringEncoder(), print_keep_alive=True,
+                 log_level=logging.DEBUG):
         super().__init__("SimulationBus", log_level)
         self.interfacetable: Dict[str, SimulationInterface] = {}
         self.packetencoder = packetencoder
@@ -118,7 +117,6 @@ class SimulationBus(PiCNProcess):
             if dst_addr not in self.interfacetable:
                 continue
 
-
             dec_packet = self.packetencoder.decode(packet)
             if self.print_keep_alive or (dec_packet.name.components[-1] == b'NFN' and dec_packet.name.components[-2] != b"KEEPALIVE"):
                 self.logger.debug(f"{time.time():.5f}" + "\tSending packet from\t'" + src_addr + "'\tto\t'" + dst_addr + "':\t'" +
@@ -148,14 +146,14 @@ class SimulationBus(PiCNProcess):
             delay = dst_interface.delay(packet)
             if self.print_keep_alive or (dec_packet.name.components[-1] == b'NFN' and dec_packet.name.components[-2] != b"KEEPALIVE"):
                 self.logger.debug("\t(delay: " + str(delay) + ")")
-            #t = threading.Timer(delay, dst_interface.send, args=[packet, src_addr, "bus"])
-            #t.setDaemon(True)
-            #t.start()
+            # t = threading.Timer(delay, dst_interface.send, args=[packet, src_addr, "bus"])
+            # t.setDaemon(True)
+            # t.start()
             time.sleep(delay)
             dst_interface.send(packet, src_addr, "bus")
 
-    def add_interface(self, addr, max_bandwidth: int=0, delay_func=lambda packet: 0, packet_loss_func=lambda packet: False):
-        """create a new interface given a addr and adds it to the
+    def add_interface(self, addr, max_bandwidth: int = 0, delay_func=lambda packet: 0, packet_loss_func=lambda packet: False):
+        """create a new interface given a addr and adds it to the # TODO: Complete docstring here???
         :param addr: address to be used for the interface
         :param max_bandwidth: Maximum bandwith for the interface
         :param delay_func: lambda-function, gets a packet as parameter and returns a delay value in seconds

@@ -1,0 +1,372 @@
+C:\Users\lucku\AppData\Local\Microsoft\WindowsApps\ubuntu.exe run "export PYTHONUNBUFFERED=1 && export PYTHONIOENCODING=UTF-8 && export PYTHONPATH=/mnt/b/_projects/PiCN-fork:/mnt/c/Users/lucku/AppData/Local/JetBrains/Toolbox/apps/PyCharm-P/ch-0/202.7319.64/plugins/python/helpers/pycharm_matplotlib_backend:/mnt/c/Users/lucku/AppData/Local/JetBrains/Toolbox/apps/PyCharm-P/ch-0/202.7319.64/plugins/python/helpers/pycharm_display && export PYCHARM_HOSTED=1 && export PYCHARM_DISPLAY_PORT=63342 && cd /mnt/b/_projects/PiCN-fork/PiCN/Simulations && /usr/bin/python3 /mnt/b/_projects/PiCN-fork/PiCN/Simulations/Sessions_and_Reconnect/Bachelor_SessionSimulation_1.py"
+2020-10-12 19:57:05,853 - ICNRepoSession 	 INFO: 	 Start PiCN Data Repository with Sessions
+2020-10-12 19:57:06,790 - FetchSession 	 DEBUG: 	 --> : Waiting for mutex in loop ...
+2020-10-12 19:57:06,793 - FetchSession 	 DEBUG: 	 --> : No packet in queue
+2020-10-12 19:57:06,864 - ICNLayer 	 DEBUG: 	 Ageing
+2020-10-12 19:57:06,907 - MgmtSys 	 INFO: 	 New Face added repo0|None, FaceID: 0
+2020-10-12 19:57:06,908 - MgmtSys 	 INFO: 	 New Face added fw0|None, FaceID: 1
+2020-10-12 19:57:06,910 - MgmtSys 	 INFO: 	 New Forwardingrule added /unibas/sim1|[0]
+Fowarding Information Base for <<None>>:
+╒════╤══════════════╤═══════════╤══════════╤═══════════╕
+│    │ Name         │ FaceIDs   │ Static   │ Session   │
+╞════╪══════════════╪═══════════╪══════════╪═══════════╡
+│  0 │ /unibas/sim1 │ [0]       │ True     │ False     │
+╘════╧══════════════╧═══════════╧══════════╧═══════════╛
+2020-10-12 19:57:07,002 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,003 - ChunkLayer 	 INFO: 	 Packet is Interest /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,011 - TimeoutPrev 	 INFO: 	 Received Packet from higher
+2020-10-12 19:57:07,012 - TimeoutPrev 	 INFO: 	 Packet is NFN interest, start timeout prevention
+2020-10-12 19:57:07,047 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Interest.Interest'>: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,048 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,048 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,048 - SimpleEnc 	 INFO: 	 Encode interest
+2020-10-12 19:57:07,068 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,069 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,071 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,072 - SimulationBus 	 DEBUG: 	 1602525427.07248	Sending packet from	'fetcht0'	to	'fw0':	'<'Interest.Interest'>	/unibas/sim1/trailer.mp4'
+2020-10-12 19:57:07,073 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,181 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 2, addr: fetcht0
+2020-10-12 19:57:07,182 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, b'I:/unibas/sim1/trailer.mp4:'
+2020-10-12 19:57:07,182 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,182 - SimpleEnc 	 INFO: 	 Decode interest
+2020-10-12 19:57:07,183 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 2, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,184 - ICNLayer 	 INFO: 	 Received Packet from lower: 2; /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,184 - ICNLayer 	 INFO: 	 Handling Interest (from lower): /unibas/sim1/trailer.mp4; Face ID: 2
+2020-10-12 19:57:07,185 - ICNLayer 	 INFO: 	 Found in FIB, forwarding to Face: [0]
+2020-10-12 19:57:07,187 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Interest.Interest'>: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,188 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,188 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,188 - SimpleEnc 	 INFO: 	 Encode interest
+2020-10-12 19:57:07,188 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,189 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,189 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,189 - SimulationBus 	 DEBUG: 	 1602525427.18989	Sending packet from	'fw0'	to	'repo0':	'<'Interest.Interest'>	/unibas/sim1/trailer.mp4'
+2020-10-12 19:57:07,190 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,192 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,193 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'I:/unibas/sim1/trailer.mp4:'
+2020-10-12 19:57:07,193 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,193 - SimpleEnc 	 INFO: 	 Decode interest
+2020-10-12 19:57:07,193 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,195 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,195 - ChunkLayer 	 INFO: 	 Packet is Interest
+2020-10-12 19:57:07,197 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,199 - RepoLayer 	 INFO: 	 --> : Found content object, sending down.
+2020-10-12 19:57:07,199 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,200 - ChunkLayer 	 INFO: 	 Packet is Content (name=/unibas/sim1/trailer.mp4, 58 bytes)
+2020-10-12 19:57:07,200 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,200 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,200 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,201 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,201 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,201 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,202 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,203 - SimulationBus 	 DEBUG: 	 1602525427.20309	Sending packet from	'repo0'	to	'fw0':	'<'Content.Content'>	/unibas/sim1/trailer.mp4'
+2020-10-12 19:57:07,203 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,203 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: repo0
+2020-10-12 19:57:07,204 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/unibas/sim1/trailer.mp4::Enjoy the awesome trailer for this incredible ICN feature.'
+2020-10-12 19:57:07,204 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,204 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,204 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,204 - ICNLayer 	 INFO: 	 Received Packet from lower: 0; /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,204 - ICNLayer 	 INFO: 	 Handling Content /unibas/sim1/trailer.mp4 Enjoy the awesome trailer for this incredible ICN feature.
+2020-10-12 19:57:07,205 - ICNLayer 	 INFO: 	 Found FIB entry for name: /unibas/sim1/trailer.mp4: <ForwardingInformationBaseEntry /unibas/sim1 via [0] at 140400354256208>
+2020-10-12 19:57:07,206 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, Packet of type <class 'PiCN.Packets.Content.Content'>: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,206 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 2, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,206 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,206 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,206 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 2
+2020-10-12 19:57:07,206 - LinkLayer 	 DEBUG: 	 Sending to face 2
+2020-10-12 19:57:07,206 - LinkLayer 	 INFO: 	 Send packet to: fetcht0
+2020-10-12 19:57:07,207 - SimulationBus 	 DEBUG: 	 1602525427.20714	Sending packet from	'fw0'	to	'fetcht0':	'<'Content.Content'>	/unibas/sim1/trailer.mp4'
+2020-10-12 19:57:07,207 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+Pending Interest Table for <<None>>:
+╒════╤══════════════════════════╤═══════════╤═════════════╤═══════════════╤══════════════════════════╤═══════════╤═════════════╕
+│    │ Name                     │ FaceIDs   │   Timestamp │   Retransmits │ Interest                 │ Session   │ Local App   │
+╞════╪══════════════════════════╪═══════════╪═════════════╪═══════════════╪══════════════════════════╪═══════════╪═════════════╡
+│  0 │ /unibas/sim1/trailer.mp4 │ [2]       │ 1.60253e+09 │             0 │ /unibas/sim1/trailer.mp4 │ False     │ [False]     │
+╘════╧══════════════════════════╧═══════════╧═════════════╧═══════════════╧══════════════════════════╧═══════════╧═════════════╛
+--> : Removing PIT entry: /unibas/sim1/trailer.mp4
+Pending Interest Table for <<None>>:
+╒════════╤═══════════╤═════════════╤═══════════════╤════════════╤═══════════╤═════════════╕
+│ Name   │ FaceIDs   │ Timestamp   │ Retransmits   │ Interest   │ Session   │ Local App   │
+╞════════╪═══════════╪═════════════╪═══════════════╪════════════╪═══════════╪═════════════╡
+╘════════╧═══════════╧═════════════╧═══════════════╧════════════╧═══════════╧═════════════╛
+Pending Interest Table for <<None>>:
+╒════╤══════════════════════════╤═══════════╤═════════════╤═══════════════╤══════════════════════════╤═══════════╤═════════════╕
+│    │ Name                     │ FaceIDs   │   Timestamp │   Retransmits │ Interest                 │ Session   │ Local App   │
+╞════╪══════════════════════════╪═══════════╪═════════════╪═══════════════╪══════════════════════════╪═══════════╪═════════════╡
+│  0 │ /unibas/sim1/trailer.mp4 │ [2]       │ 1.60253e+09 │             0 │ /unibas/sim1/trailer.mp4 │ False     │ [False]     │
+╘════╧══════════════════════════╧═══════════╧═════════════╧═══════════════╧══════════════════════════╧═══════════╧═════════════╛
+--> : Removing PIT entry: /unibas/sim1/trailer.mp4
+Pending Interest Table for <<None>>:
+╒════════╤═══════════╤═════════════╤═══════════════╤════════════╤═══════════╤═════════════╕
+│ Name   │ FaceIDs   │ Timestamp   │ Retransmits   │ Interest   │ Session   │ Local App   │
+╞════════╪═══════════╪═════════════╪═══════════════╪════════════╪═══════════╪═════════════╡
+╘════════╧═══════════╧═════════════╧═══════════════╧════════════╧═══════════╧═════════════╛
+2020-10-12 19:57:07,208 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,209 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/unibas/sim1/trailer.mp4::Enjoy the awesome trailer for this incredible ICN feature.'
+2020-10-12 19:57:07,209 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,209 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,209 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/trailer.mp4
+2020-10-12 19:57:07,210 - TimeoutPrev 	 INFO: 	 Removing entry from Keep Alive Dict
+2020-10-12 19:57:07,211 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,211 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,213 - FetchSession 	 DEBUG: 	 --> One time receive got content: Enjoy the awesome trailer for this incredible ICN feature.
+2020-10-12 19:57:07,213 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,213 - ChunkLayer 	 INFO: 	 Packet is Interest /unibas/sim1/session_connector
+2020-10-12 19:57:07,214 - TimeoutPrev 	 INFO: 	 Received Packet from higher
+2020-10-12 19:57:07,214 - TimeoutPrev 	 INFO: 	 Packet is NFN interest, start timeout prevention
+2020-10-12 19:57:07,215 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Interest.Interest'>: /unibas/sim1/session_connector
+2020-10-12 19:57:07,215 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,215 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,215 - SimpleEnc 	 INFO: 	 Encode interest
+2020-10-12 19:57:07,215 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,215 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,215 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,216 - SimulationBus 	 DEBUG: 	 1602525427.21610	Sending packet from	'fetcht0'	to	'fw0':	'<'Interest.Interest'>	/unibas/sim1/session_connector'
+2020-10-12 19:57:07,216 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,216 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 2, addr: fetcht0
+2020-10-12 19:57:07,217 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, b'I:/unibas/sim1/session_connector:'
+2020-10-12 19:57:07,217 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,217 - SimpleEnc 	 INFO: 	 Decode interest
+2020-10-12 19:57:07,217 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 2, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,217 - ICNLayer 	 INFO: 	 Received Packet from lower: 2; /unibas/sim1/session_connector
+2020-10-12 19:57:07,217 - ICNLayer 	 INFO: 	 Handling Interest (from lower): /unibas/sim1/session_connector; Face ID: 2
+2020-10-12 19:57:07,218 - ICNLayer 	 INFO: 	 Found in FIB, forwarding to Face: [0]
+2020-10-12 19:57:07,220 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Interest.Interest'>: /unibas/sim1/session_connector
+2020-10-12 19:57:07,220 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,220 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,220 - SimpleEnc 	 INFO: 	 Encode interest
+2020-10-12 19:57:07,220 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,221 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,221 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,221 - SimulationBus 	 DEBUG: 	 1602525427.22157	Sending packet from	'fw0'	to	'repo0':	'<'Interest.Interest'>	/unibas/sim1/session_connector'
+2020-10-12 19:57:07,221 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,222 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,222 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'I:/unibas/sim1/session_connector:'
+2020-10-12 19:57:07,222 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,222 - SimpleEnc 	 INFO: 	 Decode interest
+2020-10-12 19:57:07,222 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,223 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,223 - ChunkLayer 	 INFO: 	 Packet is Interest
+2020-10-12 19:57:07,223 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,223 - RepoLayer 	 INFO: 	 --> : Session packet detected.
+2020-10-12 19:57:07,223 - RepoLayer 	 INFO: 	 --> : Request to initiate session. Sending key down.
+2020-10-12 19:57:07,224 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,224 - ChunkLayer 	 INFO: 	 Packet is Content (name=/unibas/sim1/session_connector, 11 bytes)
+2020-10-12 19:57:07,224 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /unibas/sim1/session_connector
+2020-10-12 19:57:07,224 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,224 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,224 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,224 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,224 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,225 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,225 - SimulationBus 	 DEBUG: 	 1602525427.22553	Sending packet from	'repo0'	to	'fw0':	'<'Content.Content'>	/unibas/sim1/session_connector'
+2020-10-12 19:57:07,225 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,226 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: repo0
+2020-10-12 19:57:07,226 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/unibas/sim1/session_connector::dKJtGfP4So8'
+2020-10-12 19:57:07,226 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,226 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,226 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,226 - ICNLayer 	 INFO: 	 Received Packet from lower: 0; /unibas/sim1/session_connector
+2020-10-12 19:57:07,227 - ICNLayer 	 INFO: 	 Handling Content /unibas/sim1/session_connector dKJtGfP4So8
+2020-10-12 19:57:07,227 - ICNLayer 	 INFO: 	 Found FIB entry for name: /unibas/sim1/session_connector: <ForwardingInformationBaseEntry /unibas/sim1 via [0] at 140400354257832>
+2020-10-12 19:57:07,228 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, Packet of type <class 'PiCN.Packets.Content.Content'>: /unibas/sim1/session_connector
+2020-10-12 19:57:07,228 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 2, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,228 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,228 - SimpleEnc 	 INFO: 	 Encode content object
+Pending Interest Table for <<None>>:
+╒════╤════════════════════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤═════════════╕
+│    │ Name                           │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App   │
+╞════╪════════════════════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪═════════════╡
+│  0 │ /unibas/sim1/session_connector │ [2]       │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ False     │ [False]     │
+╘════╧════════════════════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧═════════════╛
+--> : Removing PIT entry: /unibas/sim1/session_connector
+Pending Interest Table for <<None>>:
+╒════════╤═══════════╤═════════════╤═══════════════╤════════════╤═══════════╤═════════════╕
+│ Name   │ FaceIDs   │ Timestamp   │ Retransmits   │ Interest   │ Session   │ Local App   │
+╞════════╪═══════════╪═════════════╪═══════════════╪════════════╪═══════════╪═════════════╡
+╘════════╧═══════════╧═════════════╧═══════════════╧════════════╧═══════════╧═════════════╛
+Pending Interest Table for <<None>>:
+╒════╤════════════════════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤═════════════╕
+│    │ Name                           │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App   │
+╞════╪════════════════════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪═════════════╡
+│  0 │ /unibas/sim1/session_connector │ [2]       │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ False     │ [False]     │
+╘════╧════════════════════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧═════════════╛
+--> : Adding session PIT entry: /sid/dKJtGfP4So8
+--> : Removing PIT entry: /unibas/sim1/session_connector
+Pending Interest Table for <<None>>:
+╒════╤══════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤════════════════╕
+│    │ Name             │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App      │
+╞════╪══════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪════════════════╡
+│  0 │ /sid/dKJtGfP4So8 │ [2, 0]    │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ True      │ [False, False] │
+╘════╧══════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧════════════════╛
+Pending Interest Table for <<None>>:
+╒════╤══════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤════════════════╕
+│    │ Name             │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App      │
+╞════╪══════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪════════════════╡
+│  0 │ /sid/dKJtGfP4So8 │ [2, 0]    │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ True      │ [False, False] │
+╘════╧══════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧════════════════╛
+2020-10-12 19:57:07,228 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 2
+2020-10-12 19:57:07,228 - LinkLayer 	 DEBUG: 	 Sending to face 2
+2020-10-12 19:57:07,229 - LinkLayer 	 INFO: 	 Send packet to: fetcht0
+2020-10-12 19:57:07,229 - SimulationBus 	 DEBUG: 	 1602525427.22927	Sending packet from	'fw0'	to	'fetcht0':	'<'Content.Content'>	/unibas/sim1/session_connector'
+2020-10-12 19:57:07,229 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,229 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,230 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/unibas/sim1/session_connector::dKJtGfP4So8'
+2020-10-12 19:57:07,230 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,230 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,230 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /unibas/sim1/session_connector
+2020-10-12 19:57:07,231 - TimeoutPrev 	 INFO: 	 Removing entry from Keep Alive Dict
+2020-10-12 19:57:07,231 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,231 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,232 - FetchSession 	 DEBUG: 	 --> One time receive got content: dKJtGfP4So8
+2020-10-12 19:57:07,233 - RepoLayer 	 INFO: 	 --> : Sending content to all sessions
+2020-10-12 19:57:07,233 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,233 - ChunkLayer 	 INFO: 	 Packet is Content (name=/sid/dKJtGfP4So8, 11 bytes)
+2020-10-12 19:57:07,233 - RepoLayer 	 DEBUG: 	 --> : Running sessions are: {}
+2020-10-12 19:57:07,233 - ChunkLayer 	 INFO: 	 Got Data from higher
+2020-10-12 19:57:07,233 - TimeoutPrev 	 INFO: 	 Received Packet from higher
+2020-10-12 19:57:07,233 - ChunkLayer 	 INFO: 	 Packet is Content (name=/sid/dKJtGfP4So8, 41 bytes)
+2020-10-12 19:57:07,233 - TimeoutPrev 	 INFO: 	 Received Packet from higher
+2020-10-12 19:57:07,233 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,233 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,234 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,234 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,234 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,234 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,234 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,234 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,234 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,234 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,234 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,234 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,234 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,234 - SimulationBus 	 DEBUG: 	 1602525427.23494	Sending packet from	'fetcht0'	to	'fw0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,235 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,235 - LinkLayer 	 INFO: 	 Send packet to: fw0
+2020-10-12 19:57:07,235 - SimulationBus 	 DEBUG: 	 1602525427.23544	Sending packet from	'fetcht0'	to	'fw0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,235 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,235 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 2, addr: fetcht0
+2020-10-12 19:57:07,236 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, b'C:/sid/dKJtGfP4So8::dKJtGfP4So8'
+2020-10-12 19:57:07,236 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,236 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 2, addr: fetcht0
+2020-10-12 19:57:07,236 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,236 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 2, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,236 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 2, b'C:/sid/dKJtGfP4So8::Hello, please store my thesis. Thank you.'
+2020-10-12 19:57:07,236 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,236 - ICNLayer 	 INFO: 	 Received Packet from lower: 2; /sid/dKJtGfP4So8
+2020-10-12 19:57:07,236 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,237 - ICNLayer 	 INFO: 	 Handling Content /sid/dKJtGfP4So8 dKJtGfP4So8
+2020-10-12 19:57:07,237 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 2, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,237 - ICNLayer 	 INFO: 	 Found FIB entry for name: /sid/dKJtGfP4So8: None
+2020-10-12 19:57:07,237 - ICNLayer 	 INFO: 	 --> : We are adding FIBs now /sid/dKJtGfP4So8
+2020-10-12 19:57:07,237 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,238 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,238 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,238 - ICNLayer 	 INFO: 	 --> : We are adding FIBs now /sid/dKJtGfP4So8
+2020-10-12 19:57:07,238 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,238 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,238 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,238 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,238 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,238 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,238 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,239 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,239 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,239 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,239 - SimulationBus 	 DEBUG: 	 1602525427.23935	Sending packet from	'fw0'	to	'repo0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,239 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,239 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,240 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/sid/dKJtGfP4So8::dKJtGfP4So8'
+2020-10-12 19:57:07,240 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,240 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,240 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,240 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,240 - SimulationBus 	 DEBUG: 	 1602525427.24069	Sending packet from	'fw0'	to	'repo0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,240 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,240 - ICNLayer 	 INFO: 	 Received Packet from lower: 2; /sid/dKJtGfP4So8
+2020-10-12 19:57:07,240 - ICNLayer 	 INFO: 	 Handling Content /sid/dKJtGfP4So8 Hello, please store my thesis. Thank you.
+2020-10-12 19:57:07,240 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,241 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,241 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,241 - ICNLayer 	 INFO: 	 Found FIB entry for name: /sid/dKJtGfP4So8: <ForwardingInformationBaseEntry /sid/dKJtGfP4So8 via [2] at 140400354257272>
+2020-10-12 19:57:07,241 - ICNLayer 	 ERROR: 	 --> : There can only be 2 face id entries when using sessions (actual length: 2)
+2020-10-12 19:57:07,241 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/sid/dKJtGfP4So8::dKJtGfP4So8'
+2020-10-12 19:57:07,241 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,241 - ICNLayer 	 ERROR: 	 --> : Or this might be some other thing: Hello, please store my thesis. Thank you.
+2020-10-12 19:57:07,241 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,241 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,241 - ICNLayer 	 ERROR: 	 --> : There can only be 2 face id entries when using sessions (actual length: 2)
+2020-10-12 19:57:07,241 - RepoLayer 	 INFO: 	 --> : Got content in repository (dKJtGfP4So8)
+2020-10-12 19:57:07,241 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,241 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,241 - ICNLayer 	 ERROR: 	 --> : Or this might be some other thing: Hello, please store my thesis. Thank you.
+2020-10-12 19:57:07,241 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,241 - RepoLayer 	 INFO: 	 --> : Session with id dKJtGfP4So8 established.
+2020-10-12 19:57:07,241 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,242 - RepoLayer 	 DEBUG: 	 --> : Running sessions for repo: {/sid/dKJtGfP4So8: 0}
+2020-10-12 19:57:07,242 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,242 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,242 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,242 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,242 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, Packet of type <class 'PiCN.Packets.Content.Content'>: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,242 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,242 - PktEncLayer 	 INFO: 	 Packet from higher, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,242 - PktEncLayer 	 INFO: 	 Encode packet
+2020-10-12 19:57:07,242 - SimpleEnc 	 INFO: 	 Encode content object
+2020-10-12 19:57:07,242 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,242 - RepoLayer 	 INFO: 	 --> : Got content in repository (dKJtGfP4So8)
+2020-10-12 19:57:07,242 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,243 - LinkLayer 	 INFO: 	 Got data from Higher Layer with faceid: 0
+2020-10-12 19:57:07,243 - LinkLayer 	 DEBUG: 	 Sending to face 0
+2020-10-12 19:57:07,243 - SimulationBus 	 DEBUG: 	 1602525427.24317	Sending packet from	'fw0'	to	'repo0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,243 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,243 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,244 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/sid/dKJtGfP4So8::Hello, please store my thesis. Thank you.'
+2020-10-12 19:57:07,244 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,244 - LinkLayer 	 INFO: 	 Send packet to: repo0
+2020-10-12 19:57:07,244 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,244 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,244 - SimulationBus 	 DEBUG: 	 1602525427.24440	Sending packet from	'fw0'	to	'repo0':	'<'Content.Content'>	/sid/dKJtGfP4So8'
+2020-10-12 19:57:07,244 - SimulationBus 	 DEBUG: 	 	(delay: 0)
+2020-10-12 19:57:07,244 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,244 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,244 - LinkLayer 	 INFO: 	 Got data from Network and from Face ID: 0, addr: fw0
+2020-10-12 19:57:07,245 - PktEncLayer 	 DEBUG: 	 --> : check_data() reports... 0, b'C:/sid/dKJtGfP4So8::Hello, please store my thesis. Thank you.'
+2020-10-12 19:57:07,245 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,245 - PktEncLayer 	 INFO: 	 Decode packet
+2020-10-12 19:57:07,245 - RepoLayer 	 INFO: 	 --> : Got content in repository (Hello, please store my thesis. Thank you.)
+2020-10-12 19:57:07,245 - SimpleEnc 	 INFO: 	 Decode content object
+2020-10-12 19:57:07,245 - PktEncLayer 	 INFO: 	 Packet from lower, Faceid: 0, Name: /sid/dKJtGfP4So8
+2020-10-12 19:57:07,245 - ChunkLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,245 - ChunkLayer 	 INFO: 	 Packet is Content
+2020-10-12 19:57:07,246 - RepoLayer 	 INFO: 	 Got Data from lower
+2020-10-12 19:57:07,246 - RepoLayer 	 INFO: 	 --> : Got content in repository (Hello, please store my thesis. Thank you.)
+Pending Interest Table for <<None>>:
+╒════╤══════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤════════════════╕
+│    │ Name             │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App      │
+╞════╪══════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪════════════════╡
+│  0 │ /sid/dKJtGfP4So8 │ [2, 0]    │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ True      │ [False, False] │
+╘════╧══════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧════════════════╛
+Pending Interest Table for <<None>>:
+╒════╤══════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤════════════════╕
+│    │ Name             │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App      │
+╞════╪══════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪════════════════╡
+│  0 │ /sid/dKJtGfP4So8 │ [2, 0]    │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ True      │ [False, False] │
+╘════╧══════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧════════════════╛
+Pending Interest Table for <<None>>:
+╒════╤══════════════════╤═══════════╤═════════════╤═══════════════╤════════════════════════════════╤═══════════╤════════════════╕
+│    │ Name             │ FaceIDs   │   Timestamp │   Retransmits │ Interest                       │ Session   │ Local App      │
+╞════╪══════════════════╪═══════════╪═════════════╪═══════════════╪════════════════════════════════╪═══════════╪════════════════╡
+│  0 │ /sid/dKJtGfP4So8 │ [2, 0]    │ 1.60253e+09 │             0 │ /unibas/sim1/session_connector │ True      │ [False, False] │
+╘════╧══════════════════╧═══════════╧═════════════╧═══════════════╧════════════════════════════════╧═══════════╧════════════════╛
+2020-10-12 19:57:07,793 - FetchSession 	 DEBUG: 	 --> : Waiting for mutex in loop ...
+2020-10-12 19:57:07,793 - FetchSession 	 DEBUG: 	 --> : No packet in queue
+2020-10-12 19:57:09,244 - MgmtSys 	 INFO: 	 Shutdown
+2020-10-12 19:57:09,867 - ICNLayer 	 DEBUG: 	 Ageing
+2020-10-12 19:57:12,869 - ICNLayer 	 DEBUG: 	 Ageing
+2020-10-12 19:57:15,871 - ICNLayer 	 DEBUG: 	 Ageing
+2020-10-12 19:57:18,873 - ICNLayer 	 DEBUG: 	 Ageing
+
+Process finished with exit code -1

@@ -4,7 +4,7 @@ from typing import List
 
 from PiCN.LayerStack.LayerStack import LayerStack
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Processes import PiCNSyncDataStructFactory
 
 from PiCN.Layers.ICNLayer.ContentStore import ContentStoreMemoryExact
@@ -38,7 +38,7 @@ class HeartbeatForwarderStack(object):
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register("cs", ContentStoreMemoryExact)
         synced_data_struct_factory.register("fib", ForwardingInformationBaseMemoryPrefix)
-        synced_data_struct_factory.register("pit", PendingInterstTableMemoryExact)
+        synced_data_struct_factory.register("pit", PendingInterestTableMemoryExact)
         synced_data_struct_factory.register("face_id_table", FaceIDDict)
         synced_data_struct_factory.create_manager()
 

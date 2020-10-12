@@ -6,6 +6,8 @@ from PiCN.Layers.ICNLayer.ForwardingInformationBase.BaseForwardingInformationBas
     ForwardingInformationBaseEntry
 from PiCN.Packets import Name
 
+from typing import Optional
+
 
 class ForwardingInformationBaseMemoryPrefix(BaseForwardingInformationBase):
 
@@ -13,7 +15,7 @@ class ForwardingInformationBaseMemoryPrefix(BaseForwardingInformationBase):
         super().__init__()
 
     def find_fib_entry(self, name: Name, already_used: List[ForwardingInformationBaseEntry] = None,
-                       incoming_faceids: List[int]=None) -> ForwardingInformationBaseEntry:
+                       incoming_faceids: List[int] = None) -> Optional[ForwardingInformationBaseEntry]:
         components = name.components[:]
         for i in range(0, len(name.components)):
             complen = len(components)
@@ -32,9 +34,9 @@ class ForwardingInformationBaseMemoryPrefix(BaseForwardingInformationBase):
             components = components[:complen - 1]
         return None
 
-    def add_fib_entry(self, name: Name, faceid: List[int], static: bool=False):
+    def add_fib_entry(self, name: Name, faceid: List[int], static: bool = False, is_session: bool = False):
         assert (isinstance(faceid, List))
-        fib_entry = ForwardingInformationBaseEntry(name, faceid, static)
+        fib_entry = ForwardingInformationBaseEntry(name, faceid, static, is_session)
         if fib_entry not in self._container:
             self._container.insert(0, fib_entry)
 

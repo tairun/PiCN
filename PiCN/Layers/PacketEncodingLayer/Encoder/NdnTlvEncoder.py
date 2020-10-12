@@ -255,7 +255,7 @@ class NdnTlvEncoder(BasicEncoder):
             else:
                 comps.append(self.decode_name_component(decoder))
         decoder.finishNestedTlvs(endOffset)
-        return Name(suite='ndn2013').__add__(comps).setDigest(dgest)
+        return Name(suite='ndn2013').__add__(comps).set_digest(dgest)
 
     def decode_meta_info(self, decoder: TlvDecoder) -> None:
         """

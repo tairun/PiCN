@@ -9,7 +9,7 @@ from PiCN.Playground.Heartbeats.Layers.PacketEncoding import HeartbeatPacketEnco
 from PiCN.Playground.Heartbeats.Layers.ComputationLayer import HeartbeatComputationLayer
 from PiCN.Playground.Heartbeats.Layers.NetworkLayer import HeartbeatNetworkLayer
 
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Layers.ICNLayer.ContentStore import ContentStoreMemoryExact
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
 
@@ -31,7 +31,7 @@ class HeartbeatComputationStack(object):
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register("cs", ContentStoreMemoryExact)
         synced_data_struct_factory.register("fib", ForwardingInformationBaseMemoryPrefix)
-        synced_data_struct_factory.register("pit", PendingInterstTableMemoryExact)
+        synced_data_struct_factory.register("pit", PendingInterestTableMemoryExact)
         synced_data_struct_factory.register("face_id_table", FaceIDDict)
         synced_data_struct_factory.create_manager()
 

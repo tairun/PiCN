@@ -1,13 +1,9 @@
 """A ICN Forwarder using PiCN"""
 
-import multiprocessing
-
-from typing import List
-
 from PiCN.LayerStack.LayerStack import LayerStack
 from PiCN.Layers.ICNLayer import BasicICNLayer
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 from PiCN.Layers.RoutingLayer import BasicRoutingLayer
 from PiCN.Layers.RoutingLayer.RoutingInformationBase import TreeRoutingInformationBase
 from PiCN.Layers.PacketEncodingLayer import BasicPacketEncodingLayer
@@ -26,15 +22,18 @@ from PiCN.Logger import Logger
 from PiCN.Mgmt import Mgmt
 from PiCN.Packets import Name
 
+from typing import List
+
 
 class ICNForwarder(object):
     """A ICN Forwarder using PiCN"""
 
-    def __init__(self, port=9000, log_level=255, encoder: BasicEncoder=None, routing: bool=False, peers=None,
-                 autoconfig: bool=False, interfaces: List[BaseInterface] = None, ageing_interval: int=3):
+    def __init__(self, port=9000, log_level=255, encoder: BasicEncoder = None, routing: bool = False, peers=None,
+                 autoconfig: bool = False, interfaces: List[BaseInterface] = None, ageing_interval: int = 3,
+                 node_name: str = None):
         # debug level
-        logger = Logger("ICNForwarder", log_level)
-
+        logger = Logger("ICNForwarder", log_level)  # FIXME: Why isn't this self.logger???
+        self._node_name = node_name
         # packet encoder
         if encoder is None:
             self.encoder = SimpleStringEncoder(log_level=log_level)
@@ -45,8 +44,10 @@ class ICNForwarder(object):
         # setup data structures
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register("cs", ContentStoreMemoryExact)
-        synced_data_struct_factory.register("fib", ForwardingInformationBaseMemoryPrefix)
-        synced_data_struct_factory.register("pit", PendingInterstTableMemoryExact)
+        synced_data_struct_factory.register(
+            "fib", ForwardingInformationBaseMemoryPrefix)
+        synced_data_struct_factory.register(
+            "pit", PendingInterestTableMemoryExact)
         synced_data_struct_factory.register("rib", TreeRoutingInformationBase)
         synced_data_struct_factory.register("faceidtable", FaceIDDict)
         synced_data_struct_factory.create_manager()
@@ -54,11 +55,13 @@ class ICNForwarder(object):
         cs = synced_data_struct_factory.manager.cs()
         fib = synced_data_struct_factory.manager.fib()
         pit = synced_data_struct_factory.manager.pit()
+
+        rib = None
         if routing:
             rib = synced_data_struct_factory.manager.rib()
         faceidtable = synced_data_struct_factory.manager.faceidtable()
 
-        #default interface
+        # default interface
         if interfaces is not None:
             self.interfaces = interfaces
             mgmt_port = port
@@ -67,9 +70,12 @@ class ICNForwarder(object):
             mgmt_port = interfaces[0].get_port()
 
         # initialize layers
-        self.linklayer = BasicLinkLayer(interfaces, faceidtable, log_level=log_level)
-        self.packetencodinglayer = BasicPacketEncodingLayer(self.encoder, log_level=log_level)
-        self.icnlayer = BasicICNLayer(log_level=log_level, ageing_interval=ageing_interval)
+        self.linklayer = BasicLinkLayer(
+            interfaces, faceidtable, log_level=log_level)
+        self.packetencodinglayer = BasicPacketEncodingLayer(
+            self.encoder, log_level=log_level)
+        self.icnlayer = BasicICNLayer(
+            log_level=log_level, ageing_interval=ageing_interval)
 
         self.lstack: LayerStack = LayerStack([
             self.icnlayer,
@@ -80,18 +86,28 @@ class ICNForwarder(object):
         if autoconfig:
             self.autoconfiglayer: AutoconfigServerLayer = AutoconfigServerLayer(linklayer=self.linklayer,
                                                                                 address='127.0.0.1',
-                                                                                registration_prefixes=
-                                                                                [(Name('/testnetwork/repos'), True)],
+                                                                                registration_prefixes=[
+                                                                                    (Name('/testnetwork/repos'), True)
+                                                                                ],
                                                                                 log_level=log_level)
             self.lstack.insert(self.autoconfiglayer, below_of=self.icnlayer)
 
         if routing:
-            self.routinglayer = BasicRoutingLayer(self.linklayer, peers=peers, log_level=log_level)
+            self.routinglayer = BasicRoutingLayer(
+                self.linklayer, peers=peers, log_level=log_level)
             self.lstack.insert(self.routinglayer, below_of=self.icnlayer)
 
         self.icnlayer.cs = cs
         self.icnlayer.fib = fib
+        # ----- by Luc # FIXME: How to pass these parameters to __init__
+        self.icnlayer.fib.logger = logger
+        self.icnlayer.fib.node_name = self._node_name
+        # ----- by Luc # FIXME: How to pass these parameters to __init__
         self.icnlayer.pit = pit
+        self.icnlayer.pit.logger = logger
+        self.icnlayer.pit.node_name = self._node_name
+        # -----
+
         if autoconfig:
             self.autoconfiglayer.fib = fib
         if routing:
@@ -109,7 +125,7 @@ class ICNForwarder(object):
         self.mgmt.start_process()
 
     def stop_forwarder(self):
-        # Stop processes
+        # stop processes
         self.lstack.stop_all()
         # close queues file descriptors
         if self.mgmt.process:

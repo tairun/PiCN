@@ -5,7 +5,7 @@ import unittest
 from PiCN.Packets import Name, Content, Interest
 from PiCN.Layers.ICNLayer.ContentStore import ContentStoreMemoryExact
 from PiCN.Layers.ICNLayer.ForwardingInformationBase import ForwardingInformationBaseMemoryPrefix
-from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterstTableMemoryExact
+from PiCN.Layers.ICNLayer.PendingInterestTable import PendingInterestTableMemoryExact
 
 from PiCN.Layers.NFNLayer.NFNComputationTable import NFNComputationList
 from PiCN.Layers.NFNLayer.R2C import TimeoutR2CHandler
@@ -24,7 +24,7 @@ class test_ToDataFirstOptimizer(unittest.TestCase):
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register("cs", ContentStoreMemoryExact)
         synced_data_struct_factory.register("fib", ForwardingInformationBaseMemoryPrefix)
-        synced_data_struct_factory.register("pit", PendingInterstTableMemoryExact)
+        synced_data_struct_factory.register("pit", PendingInterestTableMemoryExact)
         synced_data_struct_factory.register("faceidtable", FaceIDDict)
         synced_data_struct_factory.register("computation_table", NFNComputationList)
         synced_data_struct_factory.create_manager()

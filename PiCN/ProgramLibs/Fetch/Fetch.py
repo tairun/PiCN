@@ -14,12 +14,16 @@ from PiCN.Layers.PacketEncodingLayer.Encoder import BasicEncoder
 from PiCN.Packets import Content, Name, Interest, Nack
 from PiCN.Layers.TimeoutPreventionLayer import BasicTimeoutPreventionLayer, TimeoutPreventionMessageDict
 
+from typing import Optional, Union, Tuple
+
+
 class Fetch(object):
     """Fetch Tool for PiCN"""
 
-    def __init__(self, ip: str, port: int, log_level=255, encoder: BasicEncoder=None, autoconfig: bool = False,
-                 interfaces=None):
-
+    def __init__(self, ip: str, port: Optional[int], log_level=255, encoder: BasicEncoder = None,
+                 autoconfig: bool = False, interfaces=None, name: str = None):
+        self.ip = ip
+        self.name = name
         # create encoder and chunkifyer
         if encoder is None:
             self.encoder = SimpleStringEncoder(log_level=log_level)
@@ -67,7 +71,7 @@ class Fetch(object):
         # send packet
         self.lstack.start_all()
 
-    def fetch_data(self, name: Name, timeout=4.0) -> str:
+    def fetch_data(self, name: Name, timeout=4.0) -> Optional[str]:
         """Fetch data from the server
         :param name Name to be fetched
         :param timeout Timeout to wait for a response. Use 0 for infinity
@@ -93,3 +97,16 @@ class Fetch(object):
         """Close everything"""
         self.lstack.stop_all()
         self.lstack.close_all()
+
+    def send_content(self, content: Union[Content, Tuple[Name, str]]):
+        if isinstance(content, Content):
+            c = content
+        else:
+            c = Content(content[0], content[1], None)
+
+        if self.autoconfig:
+            self.lstack.queue_from_higher.put([None, c])
+        else:
+            self.lstack.queue_from_higher.put([self.fid, c])
+
+        return None
