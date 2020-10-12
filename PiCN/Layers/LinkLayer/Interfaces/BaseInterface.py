@@ -3,6 +3,7 @@
 import abc
 from . import BaseInterface
 
+
 class AddressInfo(object):
     """Addressinfo describes how to send a packet using an address and an Interface
     :param address: address information to send the packet. this information depend strongly on the interface type
@@ -17,7 +18,8 @@ class AddressInfo(object):
                and self.interface_id == other.interface_id
 
     def __hash__(self):
-        return hash(self.address)  ^ hash(self.interface_id)
+        return hash(self.address) ^ hash(self.interface_id)
+
 
 class BaseInterface(object):
     """Abstract Superclass for a PiCN Interface"""

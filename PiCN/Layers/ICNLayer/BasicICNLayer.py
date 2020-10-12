@@ -26,12 +26,12 @@ class BasicICNLayer(LayerProcess):
         self._ageing_interval: int = ageing_interval
         self._interest_to_app: bool = False
         self._session_initiator = 'session_connector'
-        self._session_initiator = 'session_connector'
         self._session_identifier = 'sid'
 
     def data_from_higher(self, to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue, data):
         high_level_id = data[0]
         packet = data[1]
+
         if isinstance(packet, Interest):
             self.handle_interest_from_higher(high_level_id, packet, to_lower, to_higher)
         elif isinstance(packet, Content):
@@ -49,9 +49,11 @@ class BasicICNLayer(LayerProcess):
         if not isinstance(data[1], Packet):
             self.logger.warning("ICN Layer expects to receive [face id, packet] from lower layer")
             return
+
         face_id = data[0]
         packet = data[1]
         self.logger.info("Received Packet from lower: " + str(face_id) + "; " + str(packet.name))
+
         if isinstance(packet, Interest):
             self.handle_interest_from_lower(face_id, packet, to_lower, to_higher, False)
         elif isinstance(packet, Content):
@@ -59,16 +61,55 @@ class BasicICNLayer(LayerProcess):
         elif isinstance(packet, Nack):
             self.handle_nack(face_id, packet, to_lower, to_higher, False)
 
-    # Send
+    def handle_reconncet(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
+                         to_higher: multiprocessing.Queue) -> None:
+        lookup_name: Name = interest.name.components[:-2]
+        remaining_hops: int = int(interest.name.components[-1]) - 1
+
+        if remaining_hops > 0:
+            pit_to_modify = self.pit.find_pit_entry(lookup_name)
+            fib_to_modify = self.fib.find_fib_entry(lookup_name)
+
+            if fib_to_modify is not None:
+                self.fib.remove_fib_entry(fib_to_modify.name)
+
+            self.fib.add_fib_entry(name=lookup_name, fid=[face_id], static=True, is_session=True)
+
+            new_pit_entry = None
+
+            if pit_to_modify is not None:
+                new_pit_entry = PendingInterestTableEntry(name=pit_to_modify.name,
+                                                          faceid=pit_to_modify.faceids.extend(face_id),
+                                                          interest=pit_to_modify.interest,
+                                                          is_session=True)
+                self.pit.remove_pit_entry(lookup_name, None, None)
+
+            self.pit.append(new_pit_entry)
+
+            new_reconnect_interest = interest
+            new_reconnect_interest.name.components[-1] = remaining_hops
+
+            to_lower.put([face_id, new_reconnect_interest])
+
+            return None
+
     def handle_interest_from_higher(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
                                     to_higher: multiprocessing.Queue):
         self.logger.info("Handling Interest (from higher): " + str(interest.name) + "; Face ID: " + str(face_id))
         cs_entry = self.cs.find_content_object(interest.name)
+
         if cs_entry is not None:
             self.queue_to_higher.put([face_id, cs_entry.content])
             return
+
+        if interest.name.components[0] == self._session_identifier and 'reconnect' in interest.name.to_string():
+            self.logger.info(f"--> Got session reconnect interest from higher")
+            self.handle_reconncet(face_id, interest, to_lower, to_higher)
+            return
+
         pit_entry = self.pit.find_pit_entry(interest.name)
         self.pit.add_pit_entry(interest.name, face_id, interest, local_app=True)
+
         if pit_entry:
             fib_entry = self.fib.find_fib_entry(interest.name, incoming_faceids=pit_entry.faceids)
         else:
@@ -85,6 +126,7 @@ class BasicICNLayer(LayerProcess):
         else:
             self.logger.info("No FIB entry, sending Nack: " + str(interest.name))
             nack = Nack(interest.name, NackReason.NO_ROUTE, interest=interest)
+
             if pit_entry is not None:  # If pit entry is available, consider it, otherwise assume interest came from higher
                 for i in range(0, len(pit_entry.faceids)):
                     if pit_entry.local_app[i]:
@@ -94,17 +136,20 @@ class BasicICNLayer(LayerProcess):
             else:
                 to_higher.put([face_id, nack])
 
-    # Receive
     def handle_interest_from_lower(self, face_id: int, interest: Interest, to_lower: multiprocessing.Queue,
                                    to_higher: multiprocessing.Queue, from_local: bool = False):
         self.logger.info("Handling Interest (from lower): " + str(interest.name) + "; Face ID: " + str(face_id))
         cs_entry = self.cs.find_content_object(interest.name)
 
-        # TODO: Delete when done: Content found on this node. Send back. No adjustment needed for sessions?!
         if cs_entry is not None:
             self.logger.info("Found in content store")
             to_lower.put([face_id, cs_entry.content])
             self.cs.update_timestamp(cs_entry)
+            return
+
+        if interest.name.components[0] == self._session_identifier:
+            self.logger.info(f"--> Got session reconnect interest from lower")
+            self.handle_reconncet(face_id, interest, to_lower, to_higher)
             return
 
         pit_entry = self.pit.find_pit_entry(interest.name)

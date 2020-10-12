@@ -18,7 +18,7 @@ class FetchSessions(Fetch):
 
     def __init__(self, ip: str, port: Optional[int], log_level=255, encoder: BasicEncoder = None,
                  autoconfig: bool = False, interfaces=None, session_keys: Optional[Dict] = None, name: str = None,
-                 polling_interval: float = 1.0):
+                 polling_interval: float = 1.0, ping_interval: float = 2.0):
         super().__init__(ip, port, log_level, encoder, autoconfig, interfaces, name)
         self.ip = ip
         self._logger = Logger("FetchSession", log_level)
@@ -28,13 +28,17 @@ class FetchSessions(Fetch):
         self._session_initiator = 'session_connector'
         self._session_identifier = 'sid'
         self._polling_interval = polling_interval
+        self._ping_interval = ping_interval
         self._manager = Manager()
         self._mutex = self._manager.Lock()
 
         self.receive_process = Process(target=self._receive_session, args=(self.lstack.queue_to_higher,
                                                                            self._polling_interval,
                                                                            self._mutex,))
+        self.ping_process = Process(target=self._ping_messages, args=(self._ping_interval,))
+
         self.receive_process.start()
+        self.ping_process.start()
 
     def handle_session(self, name: Name, packet: Packet) -> None:
         """
@@ -66,14 +70,28 @@ class FetchSessions(Fetch):
         """Terminates a session by deleting the associated id from the session store.
         param name Name to terminate session with
         """
-        # TODO: Implement method. Send interest in the form of Name(/test/t2/session/<id>/remove). Wait for ACK.
-        del self._running_sessions[name]
+        self._logger.debug(f"Terminating session with repo {name} (session was {self})")
+        content = Content(self.get_session_name(name), 'terminate')
+        self.send_content(content)
         self._pending_sessions.remove(name)
+        del self._running_sessions[name]
         self._has_session = False if not self._running_sessions else True
 
         return None
 
-    def _receive_session(self, queue: Queue, polling_interval: float, mutex: Lock):
+    def _ping_messages(self, ping_interval: float = 2.0) -> None:
+        self._logger.debug(f"--> Starting ping messages at {time.time}")
+        while True:
+            if self._has_session:
+                for repo in self._running_sessions:
+                    self._logger.debug(f"Sending ping to {repo} at {time.time}")
+                    conntent = Content(self.get_session_name(repo), 'ping')
+                    self.send_content(conntent)
+            time.sleep(ping_interval)
+
+        return None
+
+    def _receive_session(self, queue: Queue, polling_interval: float, mutex: Lock) -> None:
         while True:
             self._logger.debug(f"--> : Waiting for mutex in loop ...")
             mutex.acquire(blocking=True)
@@ -94,6 +112,8 @@ class FetchSessions(Fetch):
                 self._logger.debug(f"--> : Whoops, we just cleared a non content object from the queue! {packet}")
 
             time.sleep(polling_interval)
+
+        return None
 
     def fetch_data(self, name: Name, timeout: float = 4.0, use_session: bool = True) -> Optional[str]:
         """Fetch data from the server

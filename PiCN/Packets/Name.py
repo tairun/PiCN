@@ -1,10 +1,9 @@
 """Internal representation of network name"""
 
-from typing import List, Union
-
 import binascii
 import json
 import os
+
 from typing import List, Union
 
 
@@ -80,7 +79,7 @@ class Name(object):
             return False
         return self.to_string() == other.to_string()
 
-    def __add__(self, other) -> 'Name':
+    def __add__(self, other: Union['Name', str, List[str], List[bytes]]) -> 'Name':
         components: List[bytes] = []
         for c in self._components:
             components.append(c)

@@ -14,7 +14,7 @@ from PiCN.Layers.LinkLayer.FaceIDTable import BaseFaceIDTable
 
 class BasicLinkLayer(LayerProcess):
     """Default Link Layer implementation for PiCN
-    :param interface: preconfigured interfaces used by the link layer
+    :param interfaces: preconfigured interfaces used by the link layer
     :param faceidtable: faceidtable, that maintains the mapping between IDs and Interfaces
     :param log_level: Loglevel used in the Linklayer
     """
@@ -45,20 +45,29 @@ class BasicLinkLayer(LayerProcess):
         :param data: data to be send
         """
 
-        faceid = data[0]
+        faceid = data[0]  # This can now be and int or 'broadcast'
         packet = data[1]
         self.logger.info("Got data from Higher Layer with faceid: " + str(faceid))
 
-        addr_info = self.faceidtable.get_address_info(faceid)
-        if not addr_info:
-            self.logger.error("No addr_info found for faceid: " + str(faceid))
-            return
-        try:
-            self.interfaces[addr_info.interface_id].send(packet, addr_info.address)
-        except Exception as e:  # TODO: Catch better exception.
-            self.logger.error("Could not send packet to" + str(addr_info.address) + " Interface with ID" +
-                              addr_info.interface_id + " not available")
-        self.logger.info("Send packet to: " + str(addr_info.address))
+        to_send: List[AddressInfo] = []
+
+        if faceid == 'broadcast':
+            self.logger.debug(f"Broadcasting to all faces")
+            to_send = [self.faceidtable.get_address_info(face) for face in self.faceidtable.get_faceids()]
+        else:
+            self.logger.debug(f"Sending to face {faceid}")
+            to_send = [self.faceidtable.get_address_info(faceid)]
+
+        for addr_info in to_send:
+            if not to_send:
+                self.logger.error("No addr_info found for faceid: " + str(faceid))
+                return
+            try:
+                self.interfaces[addr_info.interface_id].send(packet, addr_info.address)
+            except Exception as e:  # TODO: Catch better exception.
+                self.logger.error(f"Could not send packet to {str(addr_info.address)} Interface with ID {addr_info.interface_id} not available")
+                self.logger.error(e)
+            self.logger.info(f"Send packet to: {str(addr_info.address)}")
 
     def _run_poll(self, from_lower: multiprocessing.Queue, from_higher: multiprocessing.Queue,
                   to_lower: multiprocessing.Queue, to_higher: multiprocessing.Queue):
@@ -107,7 +116,6 @@ class BasicLinkLayer(LayerProcess):
         super()._run_sleep(from_lower, from_higher, to_lower, to_higher)
         #TODO this is not implemented
         raise NotImplemented()
-
 
     def stop_process(self):
         for i in self.interfaces:

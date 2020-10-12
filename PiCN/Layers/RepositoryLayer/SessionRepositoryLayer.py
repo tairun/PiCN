@@ -20,22 +20,45 @@ class SessionRepositoryLayer(LayerProcess):
         self._propagate_interest: bool = propagate_interest
         self._session_initiator: str = 'session_connector'
         self._session_identifier = 'sid'
-        self._pending_sessions: Dict[Name, int] = dict()  # TODO: Implement session initiation procedure (handshake).
-        self._running_sessions: Dict[Name, int] = dict()  # TODO: Implement better data structure to handle sessions. HashMap?
+        self._pending_sessions: Dict[Name, int] = dict()
+        self._running_sessions: Dict[Name, int] = dict()
 
-    def _broadcast_reconnect(self, sid: str, max_hops: int = 5) -> None:
-        pass
+    def reconnect(self, initial_faces: List[int], sid: Name = None, max_hops: int = 5) -> None:
+        """Broadcasts a reconnect interest to all connected faceids to re-establish the session when the repository has
+        moved to another forwarder.
+        :param initial_faces A list of faces has to be provided, since the repolayer does not know what the new faceids are after moving to a new forwarder.
+        :param sid Only reconnect a specific session. If None is provided, all sessions are going to be reconnected.
+        :param max_hops Specifies how many forwarders should be contacted to restore the session
+        """
+        self.logger.info(f"--> : Reconnecting session(s) from repository.")
+        self.logger.debug(f"--> : Running sessions are: {self.running_sessions}")
+        to_reconnect = [sid] if sid else [k for k, _ in self.running_sessions]
 
-    def send_content(self, content: str):
-        self.logger.debug(f"--> : Sending content to all sessions")
-        self.logger.debug(self._running_sessions)
+        for session in to_reconnect:
+            for fid in initial_faces:
+                reconnect_address = Name(f"/{self._session_identifier}" + session + 'reconnect' + max_hops)
+                self.logger.debug(f"--> : This is the reconnect address: {reconnect_address}")
+                reconnect_interest = Interest(name=reconnect_address, wire_format=None)
+                self.queue_to_lower.put([fid, reconnect_interest])
+
+        return None
+
+    def send_content(self, content: str = 'This is just a test! ;-)') -> None:
+        """Sends content from this repository to all fetch tools if a session was established.
+        :param content Text to send as content
+        :return None
+        """
+        self.logger.info(f"--> : Sending content to all sessions")
+        self.logger.debug(f"--> : Running sessions are: {self._running_sessions}")
 
         for sid, faceid in self._running_sessions.items():
             c = Content(sid, content, None)
             self.logger.info(f"--> : Sending content ({content}) to session ({sid}) on face id {faceid}")
             self.queue_to_lower.put([faceid, c])
 
-    def _make_session_id(self, bits: int = 16) -> str:
+        return None
+
+    def _make_session_id(self, bits: int = 8) -> str:
         """
         Creates a unique id for an ICN session
         :param bits: Length of id to create
@@ -57,12 +80,12 @@ class SessionRepositoryLayer(LayerProcess):
         if isinstance(packet, Interest):
             if self._session_initiator in packet.name.components_to_string():
                 self.logger.info('--> : Session packet detected.')
-                if packet.name.components[-1].decode() == self._session_initiator:  # Detect incoming handshake (if session_connector is the last component of interest name)
+                if packet.name.components[-1].decode() == self._session_initiator:
                     session_id: str = self._make_session_id()
                     self._pending_sessions[Name(f"/{self._session_identifier}") + session_id] = faceid
                     c = Content(packet.name, session_id, None)
                     self.logger.info('--> : Request to initiate session. Sending key down.')
-                    self.queue_to_lower.put([faceid, c])  # Sending session id as content packet
+                    self.queue_to_lower.put([faceid, c])
                     return
                 else:
                     self.logger.info('--> : Unknown session packet receveid. Dropping and sending nack.')
@@ -84,15 +107,23 @@ class SessionRepositoryLayer(LayerProcess):
                 return
         elif isinstance(packet, Content):  # FIXME: Better use elif here? We need to handle incoming content for sessions!
             self.logger.info(f"--> : Got content in repository ({packet.content})")
-            if self._session_identifier in packet.name.to_string() and packet.name in self._pending_sessions:  # Detect third part of handshake and store session (if session id is last part of interest name)
+            if self._session_identifier in packet.name.to_string() and packet.name in self._pending_sessions:
                 session_id: str = packet.name.components[-1].decode()
                 self._running_sessions[Name(f"/{self._session_identifier}") + session_id] = faceid
                 del self._pending_sessions[Name(f"/{self._session_identifier}") + session_id]
                 self.logger.info(f"--> : Session with id {session_id} established.")
-                self.logger.info(f"--> : Running sessions for repo: {self._running_sessions}")
+                self.logger.debug(f"--> : Running sessions for repo: {self._running_sessions}")
+            elif packet.content == 'ping':
+                self.logger.debug(f"Answering ping packet for session {packet.name} on faceid {faceid}")
+                content = Content(packet.name, 'pong')
+                to_lower.put([faceid, content])
+            elif packet.content == 'terminate':
+                self.logger.debug(f"Terminating session {packet.name}")
+                del self._pending_sessions[packet.name]
+                del self._running_sessions[packet.name]
             return
         else:
-            self.logger('No known packet type.')
+            self.logger.info('--> : No known packet type.')
             pass
 
     @property

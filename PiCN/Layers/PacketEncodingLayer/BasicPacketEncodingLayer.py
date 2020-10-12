@@ -51,11 +51,12 @@ class BasicPacketEncodingLayer(LayerProcess):
         return self._encoder.decode(data)
 
     def check_data(self, data):
+        self.logger.debug(f"--> : check_data() reports... {data[0]}, {data[1]}")
         """check if data from queue match the requirements"""
         if len(data) != 2:
             self.logger.warning("PacketEncoding Layer expects queue elements to have size 2")
             return None, None
-        if type(data[0]) != int or data[0] != 'broadcast':
+        if type(data[0]) != int:# or data[0] != b"broadcast":
             self.logger.warning("PacketEncoding Layer expects first element to be a faceid (int) or 'broadcast'")
             return None, None
         # TODO test if data[1] has type packet or bin data? How to?
