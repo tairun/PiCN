@@ -30,8 +30,8 @@ from PiCN.Packets import Name
 class ICNForwarder(object):
     """A ICN Forwarder using PiCN"""
 
-    def __init__(self, port=9000, log_level=255, encoder: BasicEncoder=None, routing: bool=False, peers=None,
-                 autoconfig: bool=False, interfaces: List[BaseInterface] = None, ageing_interval: int=3):
+    def __init__(self, port=9000, log_level=255, encoder: BasicEncoder = None, routing: bool = False, peers=None,
+                 autoconfig: bool = False, interfaces: List[BaseInterface] = None, ageing_interval: int = 3):
         # debug level
         logger = Logger("ICNForwarder", log_level)
 
@@ -54,11 +54,12 @@ class ICNForwarder(object):
         cs = synced_data_struct_factory.manager.cs()
         fib = synced_data_struct_factory.manager.fib()
         pit = synced_data_struct_factory.manager.pit()
+
         if routing:
             rib = synced_data_struct_factory.manager.rib()
         faceidtable = synced_data_struct_factory.manager.faceidtable()
 
-        #default interface
+        # default interface
         if interfaces is not None:
             self.interfaces = interfaces
             mgmt_port = port
@@ -109,7 +110,7 @@ class ICNForwarder(object):
         self.mgmt.start_process()
 
     def stop_forwarder(self):
-        # Stop processes
+        # stop processes
         self.lstack.stop_all()
         # close queues file descriptors
         if self.mgmt.process:

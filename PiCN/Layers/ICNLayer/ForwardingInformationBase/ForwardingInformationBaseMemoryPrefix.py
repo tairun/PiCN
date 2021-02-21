@@ -6,6 +6,8 @@ from PiCN.Layers.ICNLayer.ForwardingInformationBase.BaseForwardingInformationBas
     ForwardingInformationBaseEntry
 from PiCN.Packets import Name
 
+from typing import Optional
+
 
 class ForwardingInformationBaseMemoryPrefix(BaseForwardingInformationBase):
 
@@ -13,7 +15,7 @@ class ForwardingInformationBaseMemoryPrefix(BaseForwardingInformationBase):
         super().__init__()
 
     def find_fib_entry(self, name: Name, already_used: List[ForwardingInformationBaseEntry] = None,
-                       incoming_faceids: List[int] = None) -> ForwardingInformationBaseEntry:
+                       incoming_faceids: List[int] = None) -> Optional[ForwardingInformationBaseEntry]:
         components = name.components[:]
         for i in range(0, len(name.components)):
             complen = len(components)

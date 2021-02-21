@@ -1,9 +1,8 @@
 """A ICN Repository using PiCN"""
 
-from typing import Optional
+from typing import Optional, List
 
 import multiprocessing
-from typing import List
 
 from PiCN.LayerStack.LayerStack import LayerStack
 from PiCN.Layers.ChunkLayer import BasicChunkLayer
@@ -27,14 +26,13 @@ from PiCN.Logger import Logger
 from PiCN.Packets import Name
 from PiCN.Mgmt import Mgmt
 
-# ----------------------------------------------------------------------
 
 class ICNDataRepository(object):
-    """A ICN Forwarder using PiCN"""
+    """A ICN Repository using PiCN"""
 
     def __init__(self, foldername: Optional[str], prefix: Name,
                  port=9000, log_level=255, encoder: BasicEncoder = None,
-                 autoconfig: bool = False, autoconfig_routed: bool = False, interfaces: List[BaseInterface]=None,
+                 autoconfig: bool = False, autoconfig_routed: bool = False, interfaces: List[BaseInterface] = None,
                  use_thunks=False):
         """
         :param foldername: If None, use an in-memory repository. Else, use a file system repository.
@@ -43,16 +41,17 @@ class ICNDataRepository(object):
         logger = Logger("ICNRepo", log_level)
         logger.info("Start PiCN Data Repository")
 
-        #packet encoder
-        if encoder == None:
-            self.encoder = SimpleStringEncoder(log_level = log_level)
+        # packet encoder
+        if encoder is None:
+            self.encoder = SimpleStringEncoder(log_level=log_level)
         else:
             encoder.set_log_level(log_level)
             self.encoder = encoder
-        #chunkifyer
+
+        # chunkifyer
         self.chunkifyer = SimpleContentChunkifyer()
 
-        #repo
+        # repo
         manager = multiprocessing.Manager()
 
         if foldername is None:
@@ -60,14 +59,16 @@ class ICNDataRepository(object):
         else:
             self.repo: BaseRepository = SimpleFileSystemRepository(foldername, prefix, manager, logger)
 
-        #initialize layers
+        # initialize layers
         synced_data_struct_factory = PiCNSyncDataStructFactory()
         synced_data_struct_factory.register("faceidtable", FaceIDDict)
+
         if use_thunks:
             synced_data_struct_factory.register("thunktable", ThunkList)
             synced_data_struct_factory.register("plantable", PlanTable)
         synced_data_struct_factory.create_manager()
         faceidtable = synced_data_struct_factory.manager.faceidtable()
+
         if use_thunks:
             self.parser = DefaultNFNParser()
             thunktable = synced_data_struct_factory.manager.thunktable()
@@ -112,7 +113,6 @@ class ICNDataRepository(object):
                                                        register_global=autoconfig_routed, log_level=log_level)
             self.lstack.insert(self.autoconfiglayer, below_of=self.chunklayer)
 
-
         # mgmt
         self.mgmt = Mgmt(None, None, None, self.linklayer, mgmt_port,
                          self.start_repo, repo_path=foldername,
@@ -124,9 +124,7 @@ class ICNDataRepository(object):
         self.mgmt.start_process()
 
     def stop_repo(self):
-        #Stop processes
+        # stop processes
         self.lstack.stop_all()
         self.lstack.close_all()
         self.mgmt.stop_process()
-
-# eof
